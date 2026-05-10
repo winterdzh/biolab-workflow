@@ -241,7 +241,10 @@ export default function CoverPage({ isMobile = false }) {
   }, [appStore])
 
   return (
-    <div className="min-h-screen flex flex-col overflow-hidden" style={{ background: 'var(--ui-bg)' }}>
+    <div
+      className="min-h-screen flex flex-col overflow-hidden"
+      style={{ background: 'var(--ui-bg)', height: isMobile ? '100dvh' : 'auto' }}
+    >
       {/* Header */}
       <div style={{ background: 'rgba(180,0,0,0.92)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)', boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.15)' }}>
         {isMobile ? (
@@ -292,7 +295,10 @@ export default function CoverPage({ isMobile = false }) {
         )}
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto apple-scroll">
+      <div
+        className="flex-1 min-h-0 overflow-y-auto apple-scroll"
+        style={isMobile ? { WebkitOverflowScrolling: 'touch', overscrollBehaviorY: 'contain', touchAction: 'pan-y' } : {}}
+      >
         <div className="max-w-6xl mx-auto w-full px-6 py-6">
           {!isMobile && (
             <div className="flex items-center gap-3 mb-5">
@@ -337,7 +343,7 @@ export default function CoverPage({ isMobile = false }) {
               </div>
             )}
           </div>
-          <div className="pt-2 pb-4">
+          <div className={isMobile ? 'pt-2 pb-6' : 'pt-2 pb-4'}>
             <div className={isMobile ? 'border-t border-gray-200/80 bg-white/75 backdrop-blur-md' : 'border-t border-gray-200 bg-white'} style={isMobile ? { borderRadius: 14 } : {}}>
               <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
                 <span className="text-[11px] text-gray-400">© 2026 Zhenhao Dong. Built with GitHub Copilot.</span>
