@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, Undo2, Redo2, BookOpen, Hash, LayoutGrid, Download, HelpCircle, Eye, Link } from 'lucide-react'
-import { encodeWorkflowForURL } from '../../utils/importExport'
+import { ChevronLeft, Undo2, Redo2, BookOpen, Hash, LayoutGrid, Download, HelpCircle, Eye } from 'lucide-react'
 import useWorkflowStore from '../../stores/workflowStore'
 import useAppStore from '../../stores/appStore'
 import useLibraryStore from '../../stores/libraryStore'
@@ -34,7 +33,6 @@ export default function TopBar({ workflowId, isMobile = false }) {
   const [showWfVars, setShowWfVars] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [showViewFilter, setShowViewFilter] = useState(false)
-  const [copied, setCopied] = useState(false)
 
   useEffect(() => { setName(wf?.name ?? '') }, [wf?.name])
 
@@ -67,17 +65,6 @@ export default function TopBar({ workflowId, isMobile = false }) {
     URL.revokeObjectURL(url)
   }
 
-  const handleShare = () => {
-    const json = appStore.exportWorkflowJSON(workflowId, libraryStore)
-    if (!json) return
-    const encoded = encodeWorkflowForURL(json)
-    const url = `${window.location.origin}${import.meta.env.BASE_URL}?wf=${encoded}`
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
-  }
-
   const handleAutoLayout = () => {
     if (!nodes.length) return
     loadWorkflow({ nodes: applyAutoLayout(nodes, edges), edges, workflowName: wf?.name })
@@ -100,8 +87,8 @@ export default function TopBar({ workflowId, isMobile = false }) {
         </button>
         <span className="text-sm font-medium text-white truncate flex-1">{name}</span>
         <span className="text-xs text-white/60 bg-white/10 px-2 py-0.5 rounded-sm">View only</span>
-        <button onClick={handleShare} className={copied ? primary : outline} title="Copy share link">
-          <Link size={14} /> {copied ? 'Copied!' : 'Share'}
+        <button onClick={handleExport} className={primary} title="Download workflow JSON">
+          <Download size={14} /> Export
         </button>
       </div>
     )
@@ -189,9 +176,6 @@ export default function TopBar({ workflowId, isMobile = false }) {
             </>
           )}
         </div>
-        <button onClick={handleShare} className={copied ? primary : outline} title="Copy share link">
-          <Link size={14} /> {copied ? 'Copied!' : 'Share'}
-        </button>
         <button onClick={handleExport} className={primary}>
           <Download size={14} /> Export
         </button>

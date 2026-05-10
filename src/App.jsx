@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import useAppStore from './stores/appStore'
 import useWorkflowStore from './stores/workflowStore'
 import useVariableStore from './stores/variableStore'
-import { decodeWorkflowFromURL } from './utils/importExport'
 import CoverPage from './pages/CoverPage'
 import TopBar from './components/layout/TopBar'
 import LeftPanel from './components/layout/LeftPanel'
@@ -108,20 +107,6 @@ export default function App() {
   const appStore = useAppStore()
   const activeWorkflowId = appStore.activeWorkflowId
   const isMobile = useIsMobile()
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const wfParam = params.get('wf')
-    if (!wfParam) return
-    try {
-      const json = decodeWorkflowFromURL(wfParam)
-      const data = JSON.parse(json)
-      appStore.importWorkflowJSON(json)
-      if (data.id) appStore.openWorkflow(data.id)
-    } catch (e) {
-      console.error('Could not open shared workflow:', e)
-    }
-  }, [])
 
   return activeWorkflowId
     ? <WorkflowEditor workflowId={activeWorkflowId} isMobile={isMobile} />
