@@ -55,7 +55,18 @@ The format is based on Keep a Changelog, and this project follows semantic-style
 ### Security
 - Sanitized persisted/imported workflow list to filter confidential workflow identifiers/names (including bac-expression patterns) from default-visible datasets.
 
-## [2026-05-10]
+## [2026-05-10] — 第二次更新
+
+### Summary
+- 删除保密工作流文件（oligo synthesis、cell culture），运行时过滤器同步更新防止旧 localStorage 数据泄露。
+- 新增公开演示工作流：Echo 525 cherry-pick siRNA → Fluent 1080 culture/treatment → Cytation imaging → Cytomat 2 C4 孵育 → Fluent 1080 lysis + HTRF → EnVision readout，全程 384-well。
+- 修复 CoverPage 首页显示：demo 工作流固定为第一项，移除 Plasmid Transfection 和 Cell Seeding 占位工作流。
+- 完成 RightPanel 拆分：Process、Data、Operation、Sample、Reagent、Labware 各自独立编辑器组件，主文件缩减至路由层。
+- 新增测试基础设施（Vitest + jsdom），2 个基础 store 测试通过。
+- 归档历史 setup-phase*.sh 脚本至 scripts/archive/。
+- 新增 CHANGELOG 并全程维护。
+
+## [2026-05-10] — 第一次更新
 
 ### Summary
 - Completed DataNode semantic migration to file-item model.
