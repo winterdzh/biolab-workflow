@@ -1,0 +1,38 @@
+[
+  {"id":"l1", "name":"96-well Plate, Flat Bottom",  "category":"Plate",      "format":"96-well",  "vendor":"Corning",      "catalogNumber":"3585",       "description":"Clear flat bottom, tissue culture treated", "tags":[]},
+  {"id":"l2", "name":"384-well Plate, Flat Bottom", "category":"Plate",      "format":"384-well", "vendor":"Corning",      "catalogNumber":"3680",       "description":"Clear flat bottom",                         "tags":[]},
+  {"id":"l3", "name":"6-well Plate",                "category":"Plate",      "format":"6-well",   "vendor":"Corning",      "catalogNumber":"3516",       "description":"Tissue culture treated",                    "tags":[]},
+  {"id":"l4", "name":"1536-well Plate",             "category":"Plate",      "format":"1536-well","vendor":"Corning",      "catalogNumber":"3724",       "description":"Ultra-low volume assay plate",              "tags":[]},
+  {"id":"l5", "name":"96-well PCR Plate",           "category":"Plate",      "format":"96-well",  "vendor":"Bio-Rad",      "catalogNumber":"HSP9601",    "description":"Semi-skirted PCR plate",                    "tags":["pcr"]},
+
+  {"id":"l10","name":"96-well Deep Well Plate",     "category":"Deep Well",  "format":"96-well, 2mL", "vendor":"Thermo Fisher","catalogNumber":"95040450","description":"Polypropylene, V-bottom",                    "tags":[]},
+  {"id":"l11","name":"384-well Deep Well Plate",    "category":"Deep Well",  "format":"384-well, 20µL","vendor":"Corning",  "catalogNumber":"3679",       "description":"Low-volume deep well",                      "tags":[]},
+
+  {"id":"l20","name":"1.5mL Microcentrifuge Tube",  "category":"Tube",       "format":"1.5mL",    "vendor":"Eppendorf",    "catalogNumber":"0030120086", "description":"Standard microcentrifuge tube",             "tags":[]},
+  {"id":"l21","name":"15mL Centrifuge Tube",        "category":"Tube",       "format":"15mL",     "vendor":"Falcon",       "catalogNumber":"352097",     "description":"Polypropylene conical tube",                 "tags":[]},
+  {"id":"l22","name":"50mL Centrifuge Tube",        "category":"Tube",       "format":"50mL",     "vendor":"Falcon",       "catalogNumber":"352070",     "description":"Polypropylene conical tube",                 "tags":[]},
+  {"id":"l23","name":"Cryo Tube, 1.8mL",            "category":"Tube",       "format":"1.8mL",    "vendor":"Thermo Fisher","catalogNumber":"375418",     "description":"External thread cryogenic vial",            "tags":["cryo"]},
+  {"id":"l24","name":"Cryo Tube, 5mL",              "category":"Tube",       "format":"5mL",      "vendor":"Thermo Fisher","catalogNumber":"366528",     "description":"Large-format cryogenic vial",               "tags":["cryo"]},
+
+  {"id":"l30","name":"10µL Filter Tips",            "category":"Tips",       "format":"10µL",     "vendor":"Rainin",       "catalogNumber":"RT-L10F",    "description":"Filtered, low retention",                   "tags":["filtered"]},
+  {"id":"l31","name":"200µL Filter Tips",           "category":"Tips",       "format":"200µL",    "vendor":"Rainin",       "catalogNumber":"RT-L200F",   "description":"Filtered, low retention",                   "tags":["filtered"]},
+  {"id":"l32","name":"1000µL Filter Tips",          "category":"Tips",       "format":"1000µL",   "vendor":"Rainin",       "catalogNumber":"RT-L1000F",  "description":"Filtered, low retention",                   "tags":["filtered"]},
+  {"id":"l33","name":"50µL Tips (Span-8)",          "category":"Tips",       "format":"50µL",     "vendor":"Hamilton",     "catalogNumber":"235904",     "description":"Disposable tips for Span-8 pipettor",       "tags":[]},
+
+  {"id":"l40","name":"Single-channel Reservoir",    "category":"Reservoir",  "format":"25mL",     "vendor":"Axygen",       "catalogNumber":"RES-SW25-HP","description":"Single-column reagent trough",              "tags":[]},
+  {"id":"l41","name":"8-channel Reservoir",         "category":"Reservoir",  "format":"70mL",     "vendor":"Axygen",       "catalogNumber":"RES-SW70",   "description":"8-row channel reagent trough",              "tags":[]},
+  {"id":"l42","name":"96-well Reservoir",           "category":"Reservoir",  "format":"96-well",  "vendor":"Axygen",       "catalogNumber":"RES-MW96-HP","description":"Individual-well reagent trough",            "tags":[]},
+
+  {"id":"l50","name":"T-25 Flask",                  "category":"Flask",      "format":"T-25",     "vendor":"Corning",      "catalogNumber":"430639",     "description":"Tissue culture flask with filter cap",      "tags":[]},
+  {"id":"l51","name":"T-75 Flask",                  "category":"Flask",      "format":"T-75",     "vendor":"Corning",      "catalogNumber":"430641",     "description":"Tissue culture flask with filter cap",      "tags":[]},
+  {"id":"l52","name":"T-175 Flask",                 "category":"Flask",      "format":"T-175",    "vendor":"Corning",      "catalogNumber":"431080",     "description":"Large-format tissue culture flask",         "tags":[]},
+  {"id":"l53","name":"AutoFlask",                   "category":"Flask",      "format":"AutoFlask","vendor":"Hamilton",     "catalogNumber":"",           "description":"Automated cell culture flask (robotic grip)","tags":["robotic"]},
+
+  {"id":"l60","name":"Foil Seal (Adhesive)",        "category":"Lid / Seal", "format":"96/384-well","vendor":"Thermo Fisher","catalogNumber":"AB0626",   "description":"Adhesive aluminum foil seal for plates",    "tags":[]},
+  {"id":"l61","name":"Plate Lid (Clear PS)",        "category":"Lid / Seal", "format":"96/384-well","vendor":"Corning",   "catalogNumber":"3099",       "description":"Flat polystyrene plate lid",                "tags":[]},
+  {"id":"l62","name":"Breathable Seal",             "category":"Lid / Seal", "format":"96/384-well","vendor":"Diversified Biotech","catalogNumber":"BERM-2000","description":"Gas-permeable adhesive seal", "tags":[]},
+
+  {"id":"l70","name":"96-well Tip Rack (200µL)",    "category":"Rack",       "format":"96-well",  "vendor":"Rainin",       "catalogNumber":"17001864",   "description":"Refillable tip rack for 200µL tips",        "tags":[]},
+  {"id":"l71","name":"96-well Tip Rack (1000µL)",   "category":"Rack",       "format":"96-well",  "vendor":"Rainin",       "catalogNumber":"17001863",   "description":"Refillable tip rack for 1000µL tips",       "tags":[]},
+  {"id":"l72","name":"Tube Rack (1.5mL × 24)",      "category":"Rack",       "format":"24-slot",  "vendor":"Eppendorf",    "catalogNumber":"",           "description":"24-position tube rack for 1.5mL tubes",    "tags":[]}
+]

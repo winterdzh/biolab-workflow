@@ -1,0 +1,6 @@
+[
+  {"id":"c1","name":"96-well plate","category":"Plate","format":"96-well","vendor":"Corning","catalogNumber":"3585","description":"Clear flat bottom","tags":[]},
+  {"id":"c2","name":"384-well plate","category":"Plate","format":"384-well","vendor":"Corning","catalogNumber":"3680","description":"Clear flat bottom","tags":[]},
+  {"id":"c3","name":"200µL Tip Box","category":"Tips","format":"200µL","vendor":"Rainin","catalogNumber":"RT-L200F","description":"Filtered tips","tags":["filtered"]},
+  {"id":"c4","name":"1.5mL Tube","category":"Tube","format":"1.5mL","vendor":"Eppendorf","catalogNumber":"0030120086","description":"Standard microcentrifuge tube","tags":[]}
+]

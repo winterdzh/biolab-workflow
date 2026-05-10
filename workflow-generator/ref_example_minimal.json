@@ -1,0 +1,235 @@
+{
+  "_comment": "Minimal complete example: Cell Dissociation workflow (3 steps). Shows all key patterns: sampleNode → op, reagentNode items → op, op output → op, workflowEdge chain.",
+  "version": "1.0",
+  "metadata": {
+    "name": "Cell Dissociation (Minimal Example)",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "modifiedAt": "2025-01-01T00:00:00.000Z"
+  },
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "startNode",
+      "position": {"x": 0, "y": 0},
+      "data": {"label": "Start"}
+    },
+
+    {
+      "_comment": "Object node: sampleNode. No flow handles. Connects via mat-out.",
+      "id": "obj-adherent-cells",
+      "type": "sampleNode",
+      "position": {"x": 0, "y": 0},
+      "data": {
+        "label": "Adherent HEK293T Cells",
+        "containerType": "flask"
+      }
+    },
+
+    {
+      "_comment": "Object node: reagentNode with 3 items. Each item gets its own out-{itemId} edge.",
+      "id": "obj-dissoc-reagents",
+      "type": "reagentNode",
+      "position": {"x": 0, "y": 0},
+      "data": {
+        "label": "Dissociation Reagents",
+        "items": [
+          {"id": "r1", "name": "DPBS"},
+          {"id": "r2", "name": "TrypLE Express"},
+          {"id": "r3", "name": "Cell Culture Medium"}
+        ]
+      }
+    },
+
+    {
+      "_comment": "Object node: labwareNode for consumables used in this step.",
+      "id": "obj-consumables",
+      "type": "labwareNode",
+      "position": {"x": 0, "y": 0},
+      "data": {
+        "label": "Consumables",
+        "items": [
+          {"id": "c1", "name": "15 mL Conical Tube"},
+          {"id": "c2", "name": "Reservoir"}
+        ]
+      }
+    },
+
+    {
+      "_comment": "OperationNode: enzymatic dissociation. Outputs: cell suspension.",
+      "id": "op-dissociation",
+      "type": "operationNode",
+      "position": {"x": 0, "y": 0},
+      "data": {
+        "label": "Cell Dissociation",
+        "device": {"id": "generic", "name": "Liquid Handler"},
+        "duration": {"value": "10", "unit": "min"},
+        "description": "Enzymatic dissociation of adherent cells using TrypLE",
+        "notes": "Incubate at 37°C until cells detach",
+        "inputs": [],
+        "outputs": [
+          {"id": "cell-suspension", "label": "Cell Suspension", "type": "sample"}
+        ]
+      }
+    },
+
+    {
+      "_comment": "OperationNode: centrifugation. Receives suspension from previous op.",
+      "id": "op-centrifuge",
+      "type": "operationNode",
+      "position": {"x": 0, "y": 0},
+      "data": {
+        "label": "Centrifugation",
+        "device": {"id": "generic-centrifuge", "name": "Centrifuge"},
+        "duration": {"value": "5", "unit": "min"},
+        "description": "Pellet cells at 300g, 5 min, 4°C",
+        "notes": "",
+        "inputs": [],
+        "outputs": [
+          {"id": "cell-pellet",   "label": "Cell Pellet",   "type": "sample"},
+          {"id": "supernatant",   "label": "Supernatant",   "type": "sample"}
+        ]
+      }
+    },
+
+    {
+      "_comment": "OperationNode: count cells. Receives pellet. Produces count data.",
+      "id": "op-cell-count",
+      "type": "operationNode",
+      "position": {"x": 0, "y": 0},
+      "data": {
+        "label": "Cell Count",
+        "device": {"id": "generic-counter", "name": "Cell Counter"},
+        "duration": {"value": "15", "unit": "min"},
+        "description": "Count viable cells using Trypan blue exclusion",
+        "notes": "",
+        "inputs": [],
+        "outputs": [
+          {"id": "count-data",    "label": "Cell Count Data",     "type": "info"},
+          {"id": "counted-cells", "label": "Cells (resuspended)", "type": "sample"}
+        ]
+      }
+    },
+
+    {
+      "id": "end-1",
+      "type": "endNode",
+      "position": {"x": 0, "y": 0},
+      "data": {"label": "End"}
+    }
+  ],
+
+  "edges": [
+
+    {
+      "_comment": "=== WORKFLOW FLOW EDGES (execution order) ===",
+      "id": "f-start-dissoc",
+      "type": "workflowEdge",
+      "source": "start-1",
+      "target": "op-dissociation",
+      "sourceHandle": "flow-out",
+      "targetHandle": "flow-in"
+    },
+    {
+      "id": "f-dissoc-centrifuge",
+      "type": "workflowEdge",
+      "source": "op-dissociation",
+      "target": "op-centrifuge",
+      "sourceHandle": "flow-out",
+      "targetHandle": "flow-in"
+    },
+    {
+      "id": "f-centrifuge-count",
+      "type": "workflowEdge",
+      "source": "op-centrifuge",
+      "target": "op-cell-count",
+      "sourceHandle": "flow-out",
+      "targetHandle": "flow-in"
+    },
+    {
+      "id": "f-count-end",
+      "type": "workflowEdge",
+      "source": "op-cell-count",
+      "target": "end-1",
+      "sourceHandle": "flow-out",
+      "targetHandle": "flow-in"
+    },
+
+    {
+      "_comment": "=== MATERIAL SUPPLY EDGES (Object nodes → Operations) ===",
+      "_comment2": "sampleNode always uses mat-out",
+      "id": "e-cells-to-dissoc",
+      "type": "labwareEdge",
+      "source": "obj-adherent-cells",
+      "target": "op-dissociation",
+      "sourceHandle": "mat-out",
+      "targetHandle": "in-cells",
+      "data": {"portType": "sample", "portLabel": "Adherent HEK293T Cells"}
+    },
+    {
+      "_comment": "reagentNode item r1 (DPBS) → dissociation op",
+      "id": "e-dpbs-to-dissoc",
+      "type": "labwareEdge",
+      "source": "obj-dissoc-reagents",
+      "target": "op-dissociation",
+      "sourceHandle": "out-r1",
+      "targetHandle": "in-dpbs",
+      "data": {"portType": "reagent", "portLabel": "DPBS"}
+    },
+    {
+      "_comment": "reagentNode item r2 (TrypLE) → dissociation op",
+      "id": "e-tryple-to-dissoc",
+      "type": "labwareEdge",
+      "source": "obj-dissoc-reagents",
+      "target": "op-dissociation",
+      "sourceHandle": "out-r2",
+      "targetHandle": "in-tryple",
+      "data": {"portType": "reagent", "portLabel": "TrypLE Express"}
+    },
+    {
+      "_comment": "reagentNode item r3 (medium) → dissociation op",
+      "id": "e-medium-to-dissoc",
+      "type": "labwareEdge",
+      "source": "obj-dissoc-reagents",
+      "target": "op-dissociation",
+      "sourceHandle": "out-r3",
+      "targetHandle": "in-medium",
+      "data": {"portType": "reagent", "portLabel": "Cell Culture Medium"}
+    },
+    {
+      "_comment": "labwareNode item c1 (conical tube) → centrifuge op",
+      "id": "e-tube-to-centrifuge",
+      "type": "labwareEdge",
+      "source": "obj-consumables",
+      "target": "op-centrifuge",
+      "sourceHandle": "out-c1",
+      "targetHandle": "in-tube",
+      "data": {"portType": "labware", "portLabel": "15 mL Conical Tube"}
+    },
+
+    {
+      "_comment": "=== OP-TO-OP MATERIAL EDGES (operation output → next operation input) ===",
+      "_comment2": "sourceHandle must match 'out-' + output.id from the source operation's outputs array",
+      "id": "m-suspension-to-centrifuge",
+      "type": "labwareEdge",
+      "source": "op-dissociation",
+      "target": "op-centrifuge",
+      "sourceHandle": "out-cell-suspension",
+      "targetHandle": "in-suspension",
+      "data": {"portType": "sample", "portLabel": "Cell Suspension"}
+    },
+    {
+      "_comment": "Only the pellet goes to cell count; supernatant is discarded (no edge needed for waste)",
+      "id": "m-pellet-to-count",
+      "type": "labwareEdge",
+      "source": "op-centrifuge",
+      "target": "op-cell-count",
+      "sourceHandle": "out-cell-pellet",
+      "targetHandle": "in-pellet",
+      "data": {"portType": "sample", "portLabel": "Cell Pellet"}
+    }
+  ],
+
+  "viewport": {"x": 0, "y": 0, "zoom": 0.75},
+  "globalVariables": [],
+  "librarySnapshot": {}
+}

@@ -1,0 +1,6 @@
+[
+  {"id":"s1","name":"HEK293T","type":"Cell Line","species":"Human","description":"Human embryonic kidney cells","tags":["mammalian","adherent"]},
+  {"id":"s2","name":"pUC19","type":"Plasmid","species":"E. coli","description":"Common cloning vector","tags":["plasmid","ampR"]},
+  {"id":"s3","name":"CHO-K1","type":"Cell Line","species":"Hamster","description":"Chinese hamster ovary cells","tags":["mammalian","suspension"]},
+  {"id":"s4","name":"pCMV-GFP","type":"Plasmid","species":"Mammalian","description":"CMV promoter driven GFP expression","tags":["plasmid","reporter"]}
+]

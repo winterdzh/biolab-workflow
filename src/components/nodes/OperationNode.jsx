@@ -1,0 +1,252 @@
+import { useCallback } from 'react'
+import { Handle, Position, useNodeId, useStore } from '@xyflow/react'
+import { Settings, Cpu, Clock, Droplets, RotateCw, Camera, BarChart2, Activity, Scissors, Layers, Server, Wrench, Zap } from 'lucide-react'
+import useLibraryStore from '../../stores/libraryStore'
+
+const C = '#3b82f6'   // blue — operation
+
+// Category → fallback icon when no device image is available
+const CATEGORY_FALLBACK_ICONS = {
+  'Liquid Handler':           Droplets,
+  'Centrifuge':               RotateCw,
+  'Reader':                   BarChart2,
+  'Plate Reader':             BarChart2,
+  'Imaging Reader':           Camera,
+  'Plate Washer':             Droplets,
+  'Plate Sealer':             Layers,
+  'Plate Peeler':             Scissors,
+  'qPCR':                     Activity,
+  'LC-MS':                    BarChart2,
+  'Oligo Synthesizer':        Zap,
+  'Plate Hotel / Incubator':  Server,
+  'Plate Carousel':           Server,
+  'Custom System':            Wrench,
+  'Waste':                    Wrench,
+}
+
+// Port type → color
+export const PORT_COLORS = {
+  sample:   '#3b82f6',  // blue
+  reagent:  '#8b5cf6',  // purple
+  labware:  '#06b6d4',  // cyan
+  info:     '#009688',  // teal
+}
+
+// Row height per port
+const PORT_ROW_H = 24
+// Fixed width for input/output columns
+const SIDE_COL_W = 110
+
+export default function OperationNode({ data, selected }) {
+  const nodeId = useNodeId()
+  // Derive inputs reactively from incoming labwareEdges
+  const incomingEdges = useStore(
+    useCallback((s) => s.edges.filter((e) => e.target === nodeId && e.type === 'labwareEdge'), [nodeId])
+  )
+  const computedInputs = incomingEdges.map((e) => ({
+    handleId: e.targetHandle ?? `in-${e.id}`,
+    label:    e.data?.portLabel ?? '',
+    type:     e.data?.portType  ?? 'consumable',
+  }))
+
+  // Live device image (updates immediately when library is edited)
+  const deviceImageUrl = useLibraryStore(
+    (s) => data.device?.id ? (s.devices.find((d) => d.id === data.device.id)?.imageUrl ?? '') : ''
+  )
+  const FallbackIcon = (!deviceImageUrl && data.device?.category)
+    ? (CATEGORY_FALLBACK_ICONS[data.device.category] ?? null)
+    : null
+
+  const outputs   = data.outputs ?? []
+  const maxPorts  = Math.max(computedInputs.length, outputs.length, 1)
+  const portsH    = maxPorts * PORT_ROW_H + 8
+
+  return (
+    <div
+      className="bg-white border shadow-sm transition-all"
+      style={{
+        borderColor: selected ? C : '#93c5fd',
+        borderRadius: 6,
+        width: 360,
+        boxShadow: selected ? `0 0 0 3px ${C}33` : '0 1px 4px rgba(0,0,0,0.10)',
+      }}
+    >
+      {/* ── Flow handles (top of left/right edge) ── */}
+      <Handle
+        id="flow-in"
+        type="target"
+        position={Position.Left}
+        style={{ top: 18, backgroundColor: C, width: 14, height: 14, border: '2px solid white' }}
+      />
+      <Handle
+        id="flow-out"
+        type="source"
+        position={Position.Right}
+        style={{ top: 18, backgroundColor: C, width: 14, height: 14, border: '2px solid white' }}
+      />
+
+      {/* ── Header ── */}
+      <div
+        className="flex items-center gap-2 px-3 py-2 border-b"
+        style={{ backgroundColor: '#eff6ff', borderColor: '#bfdbfe', minHeight: 36 }}
+      >
+        <Settings size={12} style={{ color: C, flexShrink: 0 }} />
+        <span className="font-semibold text-gray-800 text-sm leading-tight truncate">{data.label}</span>
+      </div>
+
+      {/* ── 3-column ports area ── */}
+      <div className="flex" style={{ minHeight: portsH + 24 }}>
+
+        {/* ── Left column: Inputs (auto-derived from edges) ── */}
+        <div
+          className="flex flex-col justify-start gap-0 relative"
+          style={{ width: SIDE_COL_W, flexShrink: 0, paddingTop: 4, paddingBottom: 4 }}
+        >
+          {computedInputs.map((inp) => {
+            const color = PORT_COLORS[inp.type] ?? PORT_COLORS.labware
+            return (
+              <div key={inp.handleId} className="flex items-center relative" style={{ height: PORT_ROW_H }}>
+                <Handle
+                  id={inp.handleId}
+                  type="target"
+                  position={Position.Left}
+                  style={{
+                    position: 'absolute',
+                    left: -8, top: '50%', transform: 'translateY(-50%)',
+                    backgroundColor: color, width: 12, height: 12,
+                    border: '2px solid white', borderRadius: '50%',
+                  }}
+                />
+                <span
+                  className="text-xs pl-3 pr-1 truncate leading-tight"
+                  style={{ color: '#777', maxWidth: SIDE_COL_W - 12 }}
+                  title={inp.label}
+                >
+                  {inp.label || <span className="italic text-gray-300">input</span>}
+                </span>
+              </div>
+            )
+          })}
+          {computedInputs.length === 0 && (
+            <div className="text-xs text-gray-200 italic px-3 py-1">no inputs</div>
+          )}
+          {/* ── Invisible drop-zone: accepts new connections from objects nodes ── */}
+          <Handle
+            id="new-input"
+            type="target"
+            position={Position.Left}
+            style={{
+              position: 'absolute', left: 2,
+              bottom: 4, width: 10, height: 10,
+              border: 'none', backgroundColor: 'transparent',
+              borderRadius: '50%', opacity: 0,
+            }}
+          />
+        </div>
+
+        {/* ── Left divider ── */}
+        <div className="w-px self-stretch" style={{ backgroundColor: '#f3e8d6' }} />
+
+        {/* ── Middle column: Description (+ device image background) ── */}
+        <div className="flex flex-col items-center justify-center flex-1 relative" style={{ minHeight: portsH }}>
+          <div
+            className="flex items-start justify-start w-full h-full relative"
+            style={{
+              margin: '6px 8px',
+              padding: '6px 8px',
+              border: '1.5px dashed #bfdbfe',
+              borderRadius: 5,
+              backgroundColor: '#f8fbff',
+              cursor: 'default',
+              minHeight: Math.max(portsH - 12, 48),
+              overflow: 'hidden',
+            }}
+          >
+            {/* Background layer: product image or category icon */}
+            {deviceImageUrl
+              ? <img src={deviceImageUrl} alt=""
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%',
+                    objectFit: 'contain', opacity: 0.12, pointerEvents: 'none' }}
+                  onError={(e) => { e.target.style.display = 'none' }}
+                />
+              : FallbackIcon && <FallbackIcon size={44}
+                  style={{ position: 'absolute', top: '50%', left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    opacity: 0.08, color: '#3b82f6', pointerEvents: 'none' }}
+                />
+            }
+            {/* Description text */}
+            <span
+              className="relative text-xs leading-relaxed"
+              style={{
+                zIndex: 1, wordBreak: 'break-word',
+                color: data.description ? '#6b7280' : '#bfdbfe',
+                fontStyle: data.description ? 'normal' : 'italic',
+              }}
+            >
+              {data.description || 'No description'}
+            </span>
+          </div>
+        </div>
+
+        {/* ── Right divider ── */}
+        <div className="w-px self-stretch" style={{ backgroundColor: '#f3e8d6' }} />
+
+        {/* ── Right column: Outputs (editable) ── */}
+        <div
+          className="flex flex-col justify-start gap-0 relative"
+          style={{ width: SIDE_COL_W, flexShrink: 0, paddingTop: 4, paddingBottom: 4 }}
+        >
+          {outputs.map((port) => {
+            const color = PORT_COLORS[port.type] ?? PORT_COLORS.labware
+            return (
+              <div key={port.id} className="flex items-center relative" style={{ height: PORT_ROW_H }}>
+                <span
+                  className="text-xs pr-3 pl-1 truncate text-right flex-1 leading-tight"
+                  style={{ color: '#777', maxWidth: SIDE_COL_W - 12 }}
+                  title={port.label}
+                >
+                  {port.label || <span className="italic text-gray-300">output</span>}
+                </span>
+                <Handle
+                  id={`out-${port.id}`}
+                  type="source"
+                  position={Position.Right}
+                  style={{
+                    position: 'absolute',
+                    right: -8, top: '50%', transform: 'translateY(-50%)',
+                    backgroundColor: color, width: 12, height: 12,
+                    border: '2px solid white', borderRadius: '50%',
+                  }}
+                />
+              </div>
+            )
+          })}
+          {outputs.length === 0 && (
+            <div className="text-xs text-gray-200 italic px-3 py-1">no outputs</div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Device footer ── */}
+      <div
+        className="flex items-center gap-1.5 px-3 py-1.5 border-t"
+        style={{ borderColor: '#ffe0b2', backgroundColor: '#fffcf8' }}
+      >
+        <Cpu size={10} className="flex-shrink-0" style={{ color: data.device ? '#FF9933' : '#ccc' }} />
+        {data.device
+          ? <span className="text-xs text-gray-500 font-medium truncate">{data.device.name}</span>
+          : <span className="text-xs text-gray-300 italic">No device assigned</span>}
+        {data.duration?.value ? (
+          <>
+            <div className="flex-1" />
+            <Clock size={10} className="flex-shrink-0" style={{ color: '#94a3b8' }} />
+            <span className="text-xs font-medium" style={{ color: '#94a3b8' }}>
+              {data.duration.value} {data.duration.unit}
+            </span>
+          </>
+        ) : null}
+      </div>
+    </div>
+  )
+}
