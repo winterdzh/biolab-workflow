@@ -110,5 +110,5 @@ export default function App() {
 
   return activeWorkflowId
     ? <WorkflowEditor workflowId={activeWorkflowId} isMobile={isMobile} />
-    : <CoverPage />
+    : <CoverPage isMobile={isMobile} />
 }
