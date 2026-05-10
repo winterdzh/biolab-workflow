@@ -183,6 +183,7 @@ export default function CoverPage({ isMobile = false }) {
   const [showGlobalVars, setShowGlobalVars] = useState(false)
   const [showNewModal, setShowNewModal] = useState(false)
   const [search, setSearch] = useState('')
+  const needsBackupReminder = appStore.needsBackupReminder()
 
   const filtered = appStore.workflows.filter((w) =>
     w.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -217,6 +218,7 @@ export default function CoverPage({ isMobile = false }) {
     a.download = `biolab_export_${new Date().toISOString().slice(0, 10)}.json`
     a.click()
     URL.revokeObjectURL(url)
+    appStore.markBackupExported()
   }
 
   const handleImportAll = () => {
@@ -294,6 +296,33 @@ export default function CoverPage({ isMobile = false }) {
           </div>
         )}
       </div>
+
+      {needsBackupReminder && (
+        <div className="max-w-6xl mx-auto w-full px-4 md:px-6 pt-3">
+          <div
+            className="flex items-center gap-2 px-3 py-2 border border-amber-200 bg-amber-50/90 text-amber-900"
+            style={{ borderRadius: 12 }}
+          >
+            <span className="text-xs md:text-sm font-medium flex-1">
+              检测到尚未备份的变更，建议导出一次全量 JSON 备份。
+            </span>
+            <button
+              onClick={handleExportAll}
+              className="inline-flex items-center gap-1 h-7 px-2.5 text-xs font-medium bg-amber-600 text-white hover:bg-amber-700 transition-colors"
+              style={{ borderRadius: 8 }}
+            >
+              <Download size={12} /> 立即备份
+            </button>
+            <button
+              onClick={() => appStore.dismissBackupReminder()}
+              className="h-7 px-2 text-xs text-amber-700 hover:text-amber-900 hover:bg-amber-100 transition-colors"
+              style={{ borderRadius: 8 }}
+            >
+              稍后提醒
+            </button>
+          </div>
+        </div>
+      )}
 
       <div
         className="flex-1 min-h-0 overflow-y-auto apple-scroll"

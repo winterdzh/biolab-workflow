@@ -1,14 +1,12 @@
 import { Handle, Position } from '@xyflow/react'
-import { Database, Upload, Download, List } from 'lucide-react'
+import { Database, FileText, List } from 'lucide-react'
 
 const C = '#009688'
 
 export default function DataNode({ data, selected }) {
-  const outputs     = data.outputs ?? []
+  const files       = data.files ?? data.outputs ?? []
   const kvCount     = data.kvPairs?.length ?? 0
-  const importCount = data.imports?.length ?? 0
-  const metaEnabled = data.exports?.metadata?.enabled
-  const rawEnabled  = data.exports?.rawData?.enabled
+  const fileCount   = files.length
 
   return (
     <div
@@ -21,15 +19,15 @@ export default function DataNode({ data, selected }) {
       <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)' }}>
         <Database size={13} style={{ color: C, flexShrink: 0 }} />
         <span className="font-semibold text-gray-800 text-sm leading-tight truncate flex-1">{data.label}</span>
-        {outputs.length > 0 && (
+        {fileCount > 0 && (
           <span className="text-xs px-1.5 py-0.5 flex-shrink-0" style={{ backgroundColor: '#B2DFDB', color: C, borderRadius: 3 }}>
-            {outputs.length}
+            {fileCount}
           </span>
         )}
       </div>
 
       {/* Summary row */}
-      {(kvCount > 0 || importCount > 0 || metaEnabled || rawEnabled || data.description) && (
+      {(kvCount > 0 || fileCount > 0 || data.description) && (
         <div className="px-3 py-1 border-b flex flex-wrap gap-x-3 gap-y-0.5" style={{ borderColor: '#f0fafa' }}>
           {kvCount > 0 && (
             <div className="flex items-center gap-1 text-xs text-gray-400">
@@ -37,36 +35,30 @@ export default function DataNode({ data, selected }) {
               <span>{kvCount} kv</span>
             </div>
           )}
-          {importCount > 0 && (
+          {fileCount > 0 && (
             <div className="flex items-center gap-1 text-xs text-gray-400">
-              <Upload size={10} style={{ color: C }} />
-              <span>{importCount} import{importCount > 1 ? 's' : ''}</span>
+              <FileText size={10} style={{ color: C }} />
+              <span>{fileCount} file{fileCount > 1 ? 's' : ''}</span>
             </div>
           )}
-          {(metaEnabled || rawEnabled) && (
-            <div className="flex items-center gap-1 text-xs text-gray-400">
-              <Download size={10} style={{ color: C }} />
-              <span>{[metaEnabled && 'meta', rawEnabled && 'raw'].filter(Boolean).join(', ')}</span>
-            </div>
-          )}
-          {kvCount === 0 && importCount === 0 && !metaEnabled && !rawEnabled && data.description && (
+          {kvCount === 0 && fileCount === 0 && data.description && (
             <span className="text-xs text-gray-400 italic truncate">{data.description}</span>
           )}
         </div>
       )}
 
-      {/* Outputs — each row has its own labeled source handle */}
+      {/* Files — each row has its own labeled source handle */}
       <div className="px-3 py-2">
-        {outputs.length === 0 ? (
-          <div className="text-xs text-gray-300 italic">No outputs</div>
+        {files.length === 0 ? (
+          <div className="text-xs text-gray-300 italic">No files</div>
         ) : (
           <div className="flex flex-col gap-0.5">
-            {outputs.map((output) => (
-              <div key={output.id} className="relative flex items-center gap-1.5 text-xs text-gray-600" style={{ height: 20 }}>
+            {files.map((file) => (
+              <div key={file.id} className="relative flex items-center gap-1.5 text-xs text-gray-600" style={{ height: 20 }}>
                 <div className="w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: C }} />
-                <span className="truncate flex-1">{output.name}</span>
+                <span className="truncate flex-1">{file.name || 'untitled file'}</span>
                 <Handle
-                  id={`out-${output.id}`}
+                  id={`out-${file.id}`}
                   type="source"
                   position={Position.Right}
                   style={{
@@ -80,8 +72,8 @@ export default function DataNode({ data, selected }) {
         )}
       </div>
 
-      {/* Fallback single mat-out — only when no named outputs (backward-compat) */}
-      {outputs.length === 0 && (
+      {/* Fallback single mat-out — only when no files */}
+      {files.length === 0 && (
         <Handle
           id="mat-out" type="source" position={Position.Right}
           className="!w-3 !h-3 !border-2 !border-white"

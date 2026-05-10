@@ -312,12 +312,18 @@ Digital data files: plate maps, sequence lists, design files, reports.
   "position": {"x": 0, "y": 0},
   "data": {
     "label": "Plate Map",
-    "outputs": []
+    "files": [
+      {"id": "f1", "name": "Plate Map.csv"}
+    ],
+    "kvPairs": [
+      {"id": "k1", "key": "version", "value": "v1"}
+    ]
   }
 }
 ```
 
-- When used as a simple input with no named outputs, edge uses `sourceHandle: "mat-out"`
+- Preferred model: each file in `data.files` gets its own output handle `out-{fileId}`.
+- Backward compatibility: legacy workflows may still use `data.outputs`; new workflows should use `data.files`.
 - `outputs` array can be populated for named outputs (same structure as operationNode outputs)
 
 ---

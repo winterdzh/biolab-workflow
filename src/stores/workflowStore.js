@@ -45,7 +45,34 @@ const useWorkflowStore = create((set, get) => ({
   onEdgesChange: (changes) => set({ edges: applyEdgeChanges(changes, get().edges) }),
   onConnect: (connection) => {
     get()._push()
-    set({ edges: addEdge({ ...connection }, get().edges) })
+    set((state) => {
+      const nextEdges = addEdge({ ...connection }, state.edges)
+      let nextNodes = state.nodes
+
+      // ProcessNode needs a concrete in-<id> entry in data.inputs so target handles persist.
+      if (connection.type === 'labwareEdge' && connection.targetHandle?.startsWith('in-')) {
+        const targetNode = state.nodes.find((n) => n.id === connection.target)
+        if (targetNode?.type === 'processNode') {
+          const inputId = connection.targetHandle.slice(3)
+          const inputs = targetNode.data?.inputs ?? []
+          const exists = inputs.some((inp) => inp.id === inputId)
+
+          if (!exists) {
+            const nextInput = {
+              id: inputId,
+              name: connection.data?.portLabel ?? '',
+            }
+            nextNodes = state.nodes.map((n) =>
+              n.id === targetNode.id
+                ? { ...n, data: { ...n.data, inputs: [...inputs, nextInput] } }
+                : n
+            )
+          }
+        }
+      }
+
+      return { edges: nextEdges, nodes: nextNodes }
+    })
   },
 
   addNode: (node) => {

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Handle, Position, useNodeId, useStore } from '@xyflow/react'
+import { Handle, Position, useConnection, useNodeId, useStore } from '@xyflow/react'
 import { Settings, Cpu, Clock, Droplets, RotateCw, Camera, BarChart2, Activity, Scissors, Layers, Server, Wrench, Zap } from 'lucide-react'
 import useLibraryStore from '../../stores/libraryStore'
 
@@ -39,6 +39,7 @@ const SIDE_COL_W = 116
 
 export default function OperationNode({ data, selected }) {
   const nodeId = useNodeId()
+  const connection = useConnection()
   // Derive inputs reactively from incoming labwareEdges
   const incomingEdges = useStore(
     useCallback((s) => s.edges.filter((e) => e.target === nodeId && e.type === 'labwareEdge'), [nodeId])
@@ -60,6 +61,8 @@ export default function OperationNode({ data, selected }) {
   const outputs   = data.outputs ?? []
   const maxPorts  = Math.max(computedInputs.length, outputs.length, 1)
   const portsH    = maxPorts * PORT_ROW_H + 8
+  const sourceHandleId = connection?.fromHandle?.id ?? ''
+  const showDropZone = Boolean(connection?.inProgress && (sourceHandleId.startsWith('out-') || sourceHandleId === 'mat-out'))
 
   return (
     <div
@@ -118,6 +121,7 @@ export default function OperationNode({ data, selected }) {
                     left: -8, top: '50%', transform: 'translateY(-50%)',
                     backgroundColor: color, width: 12, height: 12,
                     border: '2px solid white', borderRadius: '50%',
+                    zIndex: 2,
                   }}
                 />
                 <span
@@ -133,16 +137,38 @@ export default function OperationNode({ data, selected }) {
           {computedInputs.length === 0 && (
             <div className="text-[11px] text-gray-200 italic px-3 py-1">no inputs</div>
           )}
-          {/* ── Invisible drop-zone: accepts new connections from objects nodes ── */}
+          {/* ── Hidden wide drop-zone: accepts new connections from object nodes ── */}
           <Handle
             id="new-input"
             type="target"
             position={Position.Left}
             style={{
-              position: 'absolute', left: 2,
-              bottom: 4, width: 10, height: 10,
-              border: 'none', backgroundColor: 'transparent',
-              borderRadius: '50%', opacity: 0,
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: SIDE_COL_W,
+              height: '100%',
+              transform: 'none',
+              border: 'none',
+              backgroundColor: 'transparent',
+              opacity: 0,
+              zIndex: 1,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: SIDE_COL_W,
+              height: '100%',
+              border: showDropZone ? '1.5px dashed rgba(14,165,233,0.45)' : '1.5px dashed transparent',
+              backgroundColor: showDropZone ? 'rgba(14,165,233,0.06)' : 'transparent',
+              borderRadius: 10,
+              opacity: showDropZone ? 1 : 0,
+              transition: 'opacity 140ms ease, border-color 140ms ease, background-color 140ms ease',
+              pointerEvents: 'none',
+              zIndex: 0,
             }}
           />
         </div>

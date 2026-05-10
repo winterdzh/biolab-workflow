@@ -129,19 +129,19 @@ Same as reagentNode — each item has `out-{itemId}`.
 
 ### 2d. From `dataNode` → `operationNode`
 
-If `dataNode` has no named outputs, use `mat-out`:
+Preferred: if `dataNode` has files in `data.files`, use `out-{fileId}`:
+```json
+{
+  "sourceHandle": "out-f1",
+  "data": {"portType": "info", "portLabel": "Plate Map.csv"}
+}
+```
+
+Compatibility fallback (legacy workflows): if `dataNode` has no file entries, use `mat-out`:
 ```json
 {
   "sourceHandle": "mat-out",
   "data": {"portType": "info", "portLabel": "Plate Map"}
-}
-```
-
-If `dataNode` has named outputs in its `outputs` array, use `out-{outputId}`:
-```json
-{
-  "sourceHandle": "out-layout-data",
-  "data": {"portType": "info", "portLabel": "Sample Layout"}
 }
 ```
 
@@ -196,7 +196,7 @@ Carries the named product of an operation to the next operation that consumes it
 | `sampleNode` | — | `mat-out` |
 | `reagentNode` | — | `out-{itemId}` per item |
 | `labwareNode` | — | `out-{itemId}` per item |
-| `dataNode` | — | `mat-out` or `out-{outputId}` |
+| `dataNode` | — | `out-{fileId}` (preferred) or `mat-out` (legacy fallback) |
 
 \* `in-{portId}` is defined by the incoming edge, not pre-declared on the node.
 

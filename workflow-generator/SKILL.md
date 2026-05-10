@@ -49,7 +49,7 @@ For every physical input to any operation, create a corresponding Object node:
 - Biological sample (cells, tissue, pellet, plate of oligos…) → **`sampleNode`**
 - Buffer, solution, enzyme, reagent → **`reagentNode`** (group related reagents into one node; each reagent is an item)
 - Plate, tube, tip box, column, consumable → **`labwareNode`** (group related labware into one node)
-- Data file, plate map, sequence list, report → **`dataNode`**
+- Data file, plate map, sequence list, report → **`dataNode`** with `data.files` entries (one file = one output handle)
 
 ### 2.3 Identify outputs of each operation
 For each operation, list what it produces:
@@ -118,6 +118,7 @@ Use the rules below and the reference files to construct the workflow JSON.
 2. **All operation/control nodes must be part of the workflow flow chain** (connected by `workflowEdge`).
 3. **`position: {"x": 0, "y": 0}` is fine for all nodes** — the tool has auto-layout.
 4. **Every unique output in an operation's `outputs` array** must have a corresponding edge `sourceHandle: "out-{id}"` if it is consumed by a downstream node.
+4.1 **For DataNode, prefer `data.files` over `data.outputs`** for new workflows. Each file entry should be `{id, name}` and edges should use `sourceHandle: "out-{fileId}"`.
 5. **`ifElseNode`** has two source handles: `id: "true"` and `id: "false"`. Both must have outgoing workflow edges.
 6. **`loopNode`** has one incoming (`flow-in`) and one outgoing (`flow-out` / right side). The loop body connects back externally if needed.
 7. **`parallelNode`** has one incoming (`flow-in`, left) and N outgoing (`branch-0`, `branch-1`… right).
@@ -155,6 +156,7 @@ Before delivering the final JSON, verify:
 - [ ] No Object node (`sampleNode`, `reagentNode`, `labwareNode`, `dataNode`) has a `workflowEdge` connected to it
 - [ ] Every `operationNode` that produces an output used downstream has a matching edge with `sourceHandle: "out-{outputId}"`
 - [ ] Reagent/labware items referenced in edges (`out-{itemId}`) actually exist in the Object node's `items` array
+- [ ] DataNode file handles referenced in edges (`out-{fileId}`) actually exist in the DataNode `files` array
 - [ ] There is exactly one `startNode` per independent flow (two starts are OK if two parallel workflows are shown)
 - [ ] All `ifElseNode` nodes have both `"true"` and `"false"` outgoing workflow edges
 - [ ] No duplicate node IDs or edge IDs
@@ -190,4 +192,5 @@ If any check fails, fix the JSON before outputting.
 - When the protocol mentions "prepare X buffer by mixing A and B", create a **`reagentNode`** with items A and B — do NOT create a separate operation for simple reagent prep unless it involves a device/robot step.
 - Prefer grouping related reagents or labware into a single Object node with multiple items rather than creating one node per item.
 - If a step is purely informational (e.g. "record data", "export report"), use **`processNode`** with `mode: "export"` rather than an `operationNode`.
+- DataNode should be treated as a noun-like data container. Upload/download actions belong in **`processNode`**, not in `dataNode` schema.
 - If a step says "incubate at 37°C for 24 hours", use **`waitUntilNode`** if the duration is conditional, or `operationNode` with the device being "Incubator" and the duration filled in if it's a fixed time.

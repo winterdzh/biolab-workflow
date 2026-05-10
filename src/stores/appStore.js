@@ -1,7 +1,63 @@
 import { create } from 'zustand'
 import { v4 as uuidv4 } from 'uuid'
-import { OLIGO_WORKFLOW } from '../data/oligoWorkflow'
-import { CELL_WORKFLOW }  from '../data/cellWorkflow'
+import { DEMO_WORKFLOW } from '../data/demoWorkflow'
+
+const APP_STATE_STORAGE_KEY = 'biolab.appState.v1'
+const CONFIDENTIAL_NAME_REGEX = /(oligo|cell\s*culture|cell\s*processing|bac[-\s]?expression)/i
+
+function sanitizeWorkflows(workflows = []) {
+  return (workflows ?? []).filter((w) => {
+    if (!w) return false
+    const name = String(w.name ?? '')
+    const tags = Array.isArray(w.tags) ? w.tags.join(' ') : ''
+    return !(CONFIDENTIAL_NAME_REGEX.test(name) || CONFIDENTIAL_NAME_REGEX.test(tags))
+  })
+}
+
+function getWorkflowFingerprint(workflows = []) {
+  return workflows
+    .map((w) => `${w.id}:${w.modifiedAt ?? ''}:${w.nodes?.length ?? 0}:${w.edges?.length ?? 0}`)
+    .sort()
+    .join('|')
+}
+
+function loadPersistedAppState() {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(APP_STATE_STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (!parsed || parsed.version !== 1) return null
+    if (!Array.isArray(parsed.workflows) || !Array.isArray(parsed.globalVariables)) return null
+    return {
+      ...parsed,
+      workflows: sanitizeWorkflows(parsed.workflows),
+    }
+  } catch {
+    return null
+  }
+}
+
+function toPersistedPayload(state) {
+  return {
+    version: 1,
+    globalVariables: state.globalVariables,
+    workflows: state.workflows,
+    activeWorkflowId: state.activeWorkflowId,
+    lastBackupAt: state.lastBackupAt,
+    lastBackupFingerprint: state.lastBackupFingerprint,
+    dismissedBackupFingerprint: state.dismissedBackupFingerprint,
+  }
+}
+
+function savePersistedAppState(state) {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(APP_STATE_STORAGE_KEY, JSON.stringify(toPersistedPayload(state)))
+  } catch {
+    // Ignore write failures (private mode / quota exceeded).
+  }
+}
 
 function makeWorkflow(name = 'New Workflow') {
   return {
@@ -17,16 +73,51 @@ function makeWorkflow(name = 'New Workflow') {
   }
 }
 
+const persisted = loadPersistedAppState()
+const defaultWorkflows = [DEMO_WORKFLOW]
+const initialWorkflows = (persisted?.workflows?.length ? persisted.workflows : defaultWorkflows)
+const initialGlobalVariables = persisted?.globalVariables ?? [
+  { id: 'gv1', name: 'projectName', type: 'string', value: 'My Project', description: 'Project identifier' },
+  { id: 'gv2', name: 'operator', type: 'string', value: '', description: 'Operator name' },
+]
+const initialActiveWorkflowId = (persisted?.activeWorkflowId && initialWorkflows.some((w) => w.id === persisted.activeWorkflowId))
+  ? persisted.activeWorkflowId
+  : null
+const initialLastBackupAt = persisted?.lastBackupAt ?? null
+const initialLastBackupFingerprint = persisted?.lastBackupFingerprint ?? null
+const initialDismissedBackupFingerprint = persisted?.dismissedBackupFingerprint ?? null
+
 const useAppStore = create((set, get) => ({
   // ── Global variables (cross-workflow)
-  globalVariables: [
-    { id: 'gv1', name: 'projectName', type: 'string', value: 'My Project', description: 'Project identifier' },
-    { id: 'gv2', name: 'operator', type: 'string', value: '', description: 'Operator name' },
-  ],
+  globalVariables: initialGlobalVariables,
 
   // ── Workflow list
-  workflows: [makeWorkflow('Plasmid Transfection'), makeWorkflow('Cell Seeding'), OLIGO_WORKFLOW, CELL_WORKFLOW],
-  activeWorkflowId: null,   // null = cover page
+  workflows: initialWorkflows,
+  activeWorkflowId: initialActiveWorkflowId,   // null = cover page
+
+  // ── Backup reminder metadata
+  lastBackupAt: initialLastBackupAt,
+  lastBackupFingerprint: initialLastBackupFingerprint,
+  dismissedBackupFingerprint: initialDismissedBackupFingerprint,
+
+  getWorkflowsFingerprint: () => getWorkflowFingerprint(get().workflows),
+  needsBackupReminder: () => {
+    const current = getWorkflowFingerprint(get().workflows)
+    if (!current) return false
+    if (get().dismissedBackupFingerprint === current) return false
+    return get().lastBackupFingerprint !== current
+  },
+  markBackupExported: () => {
+    const current = getWorkflowFingerprint(get().workflows)
+    set({
+      lastBackupAt: new Date().toISOString(),
+      lastBackupFingerprint: current,
+      dismissedBackupFingerprint: null,
+    })
+  },
+  dismissBackupReminder: () => {
+    set({ dismissedBackupFingerprint: getWorkflowFingerprint(get().workflows) })
+  },
 
   // ── Global variable CRUD
   addGlobalVariable: (v) =>
@@ -76,7 +167,8 @@ const useAppStore = create((set, get) => ({
       if (!data.nodes || !data.edges) throw new Error('Missing nodes/edges')
       const existing = get().workflows.find((w) => w.id === data.id)
       if (existing) {
-        set({ workflows: get().workflows.map((w) => w.id === data.id ? { ...w, ...data } : w) })
+        const merged = sanitizeWorkflows(get().workflows.map((w) => w.id === data.id ? { ...w, ...data } : w))
+        set({ workflows: merged })
       } else {
         const wf = {
           id: data.id ?? uuidv4(),
@@ -89,7 +181,7 @@ const useAppStore = create((set, get) => ({
           variables: data.workflowVariables ?? [],
           tags: data.metadata?.tags ?? [],
         }
-        set({ workflows: [...get().workflows, wf] })
+        set({ workflows: sanitizeWorkflows([...get().workflows, wf]) })
       }
       return true
     } catch (e) {
@@ -147,7 +239,7 @@ const useAppStore = create((set, get) => ({
     try {
       const data = JSON.parse(jsonString)
       if (data.globalVariables) set({ globalVariables: data.globalVariables })
-      if (data.workflows) set({ workflows: data.workflows })
+      if (data.workflows) set({ workflows: sanitizeWorkflows(data.workflows) })
       if (data.library) {
         libraryStore.setSamples(data.library.samples ?? [])
         libraryStore.setLabware(data.library.labware ?? data.library.consumables ?? [])
@@ -161,5 +253,11 @@ const useAppStore = create((set, get) => ({
     }
   },
 }))
+
+if (typeof window !== 'undefined') {
+  useAppStore.subscribe((state) => {
+    savePersistedAppState(state)
+  })
+}
 
 export default useAppStore

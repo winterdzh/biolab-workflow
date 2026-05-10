@@ -99,7 +99,8 @@ export default function WorkflowCanvas({ readOnly = false }) {
           const itemId = sourceHandle.slice(4)
           let item
           if (srcNode.type === 'dataNode') {
-            item = srcNode.data?.outputs?.find((o) => o.id === itemId)
+            item = srcNode.data?.files?.find((o) => o.id === itemId)
+              ?? srcNode.data?.outputs?.find((o) => o.id === itemId)
           } else {
             item = srcNode.data?.items?.find((it) => it.id === itemId)
           }

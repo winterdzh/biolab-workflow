@@ -29,7 +29,7 @@ export const ELEMENT_PALETTE = [
   { type: 'sampleNode',       label: 'Sample',        description: 'Sample in container',         color: '#3b82f6', icon: '🧬', category: 'objects' },
   { type: 'reagentNode',      label: 'Reagents',      description: 'Buffers, solutions…',         color: '#8b5cf6', icon: '🧪', category: 'objects' },
   { type: 'labwareNode',      label: 'Labware',       description: 'Plates, tips, tubes…',        color: '#06b6d4', icon: '📦', category: 'objects' },
-  { type: 'dataNode',         label: 'Data',          description: 'Import / export data',        color: '#009688', icon: '⊞', category: 'objects' },
+  { type: 'dataNode',         label: 'Data',          description: 'Data files and metadata',     color: '#009688', icon: '⊞', category: 'objects' },
 ]
 
 // Kept separate so LeftPanel can render them in a distinct section

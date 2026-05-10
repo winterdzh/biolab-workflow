@@ -10,12 +10,7 @@ const defaultDataMap = {
   [NODE_TYPES.WAIT_UNTIL]:   { label: 'Wait Until', condition: '' },
   [NODE_TYPES.SET_VARIABLE]: { label: 'Set Variable', variableName: '', expression: '' },
   [NODE_TYPES.PROCESS]:      { label: 'Process', mode: 'export', inputs: [], destination: '', format: 'csv', assignments: [], webhookUrl: '', webhookMethod: 'POST', description: '' },
-  [NODE_TYPES.DATA]:         { label: 'Data', description: '', kvPairs: [], imports: [], outputs: [],
-    exports: {
-      metadata: { enabled: false, variables: [] },
-      rawData:  { enabled: false, variables: [] },
-    },
-  },
+  [NODE_TYPES.DATA]:         { label: 'Data', description: '', kvPairs: [], files: [], outputs: [] },
   [NODE_TYPES.NOTIFICATION]: { label: 'Note', message: '', noteType: 'note' },
   [NODE_TYPES.EXPERIMENT]:   { label: 'Experiment', description: '' },
   [NODE_TYPES.SAMPLE]:       { label: 'Sample', sampleId: null, sampleName: '', containerType: 'well_96', quantity: '', concentration: '', concentrationUnit: 'nM', volume: '', volumeUnit: 'µL', storageTemp: '', notes: '' },

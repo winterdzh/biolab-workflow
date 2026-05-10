@@ -1,4 +1,4 @@
-import { Handle, Position } from '@xyflow/react'
+import { Handle, Position, useConnection } from '@xyflow/react'
 import { Cpu, FileDown, Variable, AlertTriangle, Table2, Webhook } from 'lucide-react'
 
 const C = '#7c3aed'   // violet — process/info control
@@ -12,11 +12,15 @@ export const PROCESS_MODES = {
 }
 
 export default function ProcessNode({ data, selected }) {
+  const connection = useConnection()
   const mode      = data.mode ?? 'export'
   const modeInfo  = PROCESS_MODES[mode] ?? PROCESS_MODES.export
   const ModeIcon  = modeInfo.icon
   const inputs    = data.inputs  ?? []   // labeled data input ports
   const hasInputs = inputs.length > 0
+  const inputZoneHeight = hasInputs ? Math.max(inputs.length * 21 + 8, 42) : 42
+  const sourceHandleId = connection?.fromHandle?.id ?? ''
+  const showDropZone = Boolean(connection?.inProgress && (sourceHandleId.startsWith('out-') || sourceHandleId === 'mat-out'))
 
   return (
     <div
@@ -62,7 +66,7 @@ export default function ProcessNode({ data, selected }) {
 
       {/* Named data inputs list */}
       {hasInputs && (
-        <div className="px-3 pb-2 flex flex-col gap-0.5">
+        <div className="px-3 pb-2 flex flex-col gap-0.5 relative">
           {inputs.map((inp) => (
             <div key={inp.id} className="relative flex items-center gap-1.5 text-[11px] text-gray-500" style={{ height: 21 }}>
               <Handle
@@ -73,18 +77,87 @@ export default function ProcessNode({ data, selected }) {
                   position: 'absolute', left: -20, top: '50%', transform: 'translateY(-50%)',
                   width: 10, height: 10, backgroundColor: '#009688',
                   border: '2px solid white', borderRadius: '50%',
+                  zIndex: 2,
                 }}
               />
               <div className="w-1.5 h-1.5 rounded-full ml-2 flex-shrink-0" style={{ backgroundColor: '#009688' }} />
               <span className="truncate">{inp.name || <span className="italic text-gray-300">unnamed</span>}</span>
             </div>
           ))}
+          <Handle
+            id="new-input"
+            type="target"
+            position={Position.Left}
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: '100%',
+              height: inputZoneHeight,
+              transform: 'none',
+              border: 'none',
+              backgroundColor: 'transparent',
+              opacity: 0,
+              zIndex: 1,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: '100%',
+              height: inputZoneHeight,
+              border: showDropZone ? '1.5px dashed rgba(124,58,237,0.45)' : '1.5px dashed transparent',
+              backgroundColor: showDropZone ? 'rgba(124,58,237,0.06)' : 'transparent',
+              borderRadius: 8,
+              opacity: showDropZone ? 1 : 0,
+              transition: 'opacity 140ms ease, border-color 140ms ease, background-color 140ms ease',
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+          />
         </div>
       )}
 
       {!hasInputs && (
-        <div className="px-3 pb-2 text-[11px] text-gray-300 italic">
-          No data inputs
+        <div className="px-3 pb-2 relative">
+          <Handle
+            id="new-input"
+            type="target"
+            position={Position.Left}
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: '100%',
+              height: inputZoneHeight,
+              transform: 'none',
+              border: 'none',
+              backgroundColor: 'transparent',
+              opacity: 0,
+              zIndex: 1,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: '100%',
+              height: inputZoneHeight,
+              border: showDropZone ? '1.5px dashed rgba(124,58,237,0.45)' : '1.5px dashed transparent',
+              backgroundColor: showDropZone ? 'rgba(124,58,237,0.06)' : 'transparent',
+              borderRadius: 8,
+              opacity: showDropZone ? 1 : 0,
+              transition: 'opacity 140ms ease, border-color 140ms ease, background-color 140ms ease',
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+          />
+          <div className="text-[11px] text-gray-300 italic">
+            No data inputs
+          </div>
         </div>
       )}
 
