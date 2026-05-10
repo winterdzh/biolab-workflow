@@ -186,7 +186,7 @@ export default function CoverPage() {
   }, [appStore])
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--ui-bg)' }}>
+    <div className="min-h-screen flex flex-col overflow-hidden" style={{ background: 'var(--ui-bg)' }}>
       {/* Header */}
       <div style={{ background: 'rgba(180,0,0,0.92)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)', boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.15)' }}>
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center gap-3">
@@ -225,8 +225,9 @@ export default function CoverPage() {
         </div>
       </div>
 
-      <div className="flex-1 max-w-6xl mx-auto w-full px-6 py-6">
-        <div className="flex items-center gap-3 mb-5">
+      <div className="flex-1 min-h-0 overflow-y-auto apple-scroll">
+        <div className="max-w-6xl mx-auto w-full px-6 py-6">
+          <div className="flex items-center gap-3 mb-5">
           <div className="relative flex-1 max-w-xs">
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
             <input value={search} onChange={(e) => setSearch(e.target.value)}
@@ -241,43 +242,44 @@ export default function CoverPage() {
           </button>
         </div>
 
-        {/* Grid — upload card always first */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <UploadCard onFile={processFile} />
-          {filtered.map((wf) => (
-            <WorkflowCard key={wf.id} wf={wf}
-              onOpen={() => appStore.openWorkflow(wf.id)}
-              onDuplicate={() => appStore.duplicateWorkflow(wf.id)}
-              onDelete={() => { if (confirm(`Delete "${wf.name}"?`)) appStore.deleteWorkflow(wf.id) }}
-              onExport={() => handleExport(wf.id)} />
-          ))}
-          {filtered.length === 0 && !search && (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-300 col-span-2">
-              <FlaskConical size={36} className="mb-3 text-gray-200" />
-              <div className="text-sm text-gray-400">No workflows yet. Create one or import a JSON file.</div>
+          {/* Grid — upload card always first */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-8">
+            <UploadCard onFile={processFile} />
+            {filtered.map((wf) => (
+              <WorkflowCard key={wf.id} wf={wf}
+                onOpen={() => appStore.openWorkflow(wf.id)}
+                onDuplicate={() => appStore.duplicateWorkflow(wf.id)}
+                onDelete={() => { if (confirm(`Delete "${wf.name}"?`)) appStore.deleteWorkflow(wf.id) }}
+                onExport={() => handleExport(wf.id)} />
+            ))}
+            {filtered.length === 0 && !search && (
+              <div className="flex flex-col items-center justify-center py-12 text-gray-300 col-span-2">
+                <FlaskConical size={36} className="mb-3 text-gray-200" />
+                <div className="text-sm text-gray-400">No workflows yet. Create one or import a JSON file.</div>
+              </div>
+            )}
+          </div>
+          <div className="pt-2">
+            <div className="border-t border-gray-200 bg-white">
+              <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+                <span className="text-xs text-gray-400">© 2026 Zhenhao Dong. Built with GitHub Copilot.</span>
+                <a
+                  href="https://github.com/winterdzh/biolab-workflow"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  GitHub
+                </a>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
       {showLibrary && <LibraryModal onClose={() => setShowLibrary(false)} />}
       {showGlobalVars && <GlobalVariablesPanel scope="global" onClose={() => setShowGlobalVars(false)} />}
       {showNewModal && <NewWorkflowModal onClose={() => setShowNewModal(false)} onCreate={handleCreate} />}
-
-      {/* Footer */}
-      <div className="border-t border-gray-200 bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
-          <span className="text-xs text-gray-400">© 2026 Zhenhao Dong. Built with GitHub Copilot.</span>
-          <a
-            href="https://github.com/winterdzh/biolab-workflow"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            GitHub
-          </a>
-        </div>
-      </div>
     </div>
   )
 }
