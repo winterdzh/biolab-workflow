@@ -56,7 +56,7 @@ const LIBRARY_CONFIG = {
       { key: 'capacity', label: 'Capacity' },
       { key: 'description', label: 'Description' },
       { key: 'website',     label: 'Product Website', placeholder: 'https://www.tecan.com/...' },
-      { key: 'imageUrl',    label: 'Image URL',        placeholder: '/device-images/d1.jpg  —  set by fetch-product-info.mjs or paste URL' },
+      { key: 'imageUrl',    label: 'Image URL',        placeholder: '/device-images/d1.jpg  —  set by scripts/fetch-product-info.mjs or paste URL' },
       { key: 'modules',     label: 'Optional Modules (comma-separated)', placeholder: 'Shaker, Thermocycler, ...', isArray: true },
     ],
   },

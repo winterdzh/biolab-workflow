@@ -47,7 +47,8 @@
 ```
 /workspaces/biolab-workflow/
 ├── docs/       — 本文件、ARCHITECTURE.md、SKILL.md、SETUP_GUIDE.md
-├── scripts/    — setup-phase1~7.sh
+├── scripts/    — add-website-fields.mjs / fetch-product-info.mjs
+│   └── archive/ — setup-phase1~7.sh（历史初始化脚本归档）
 ├── src/
 │   ├── components/
 │   │   ├── canvas/    — WorkflowCanvas.jsx, SelectionToolbar.jsx
