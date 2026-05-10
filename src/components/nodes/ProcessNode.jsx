@@ -45,26 +45,26 @@ export default function ProcessNode({ data, selected }) {
 
       {/* Header */}
       <div
-        className="flex items-center gap-2 px-3 py-2 border-b"
+        className="flex items-center gap-2 px-3 py-2.5 border-b"
         style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)', minHeight: 36 }}
       >
         <Cpu size={12} style={{ color: C, flexShrink: 0 }} />
-        <span className="font-semibold text-gray-800 text-sm leading-tight truncate flex-1">
+        <span className="font-semibold text-[13px] tracking-[-0.01em] text-gray-800 leading-tight truncate flex-1">
           {data.label}
         </span>
       </div>
 
       {/* Mode badge */}
-      <div className="px-3 pt-2 pb-1 flex items-center gap-1.5">
+      <div className="px-3 pt-2.5 pb-1 flex items-center gap-1.5">
         <ModeIcon size={11} style={{ color: C, flexShrink: 0 }} />
-        <span className="text-xs font-medium" style={{ color: C }}>{modeInfo.label}</span>
+        <span className="text-[11px] font-medium" style={{ color: C }}>{modeInfo.label}</span>
       </div>
 
       {/* Named data inputs list */}
       {hasInputs && (
         <div className="px-3 pb-2 flex flex-col gap-0.5">
           {inputs.map((inp) => (
-            <div key={inp.id} className="relative flex items-center gap-1.5 text-xs text-gray-500" style={{ height: 20 }}>
+            <div key={inp.id} className="relative flex items-center gap-1.5 text-[11px] text-gray-500" style={{ height: 21 }}>
               <Handle
                 id={`in-${inp.id}`}
                 type="target"
@@ -83,34 +83,34 @@ export default function ProcessNode({ data, selected }) {
       )}
 
       {!hasInputs && (
-        <div className="px-3 pb-2 text-xs text-gray-300 italic">
+        <div className="px-3 pb-2 text-[11px] text-gray-300 italic">
           No data inputs
         </div>
       )}
 
       {/* Export destination / assignment preview */}
       {mode === 'export' && data.destination && (
-        <div className="mx-3 mb-2 px-2 py-1 text-xs text-gray-500 border border-gray-100 rounded truncate" style={{ borderRadius: 4 }}>
+        <div className="mx-3 mb-2 px-2 py-1 text-[11px] text-gray-500 border border-gray-100 rounded truncate" style={{ borderRadius: 8 }}>
           → {data.destination}
         </div>
       )}
       {mode === 'variable' && (data.assignments ?? []).length > 0 && (
         <div className="mx-3 mb-2 flex flex-col gap-0.5">
           {data.assignments.slice(0, 3).map((a, i) => (
-            <div key={i} className="text-xs text-gray-500 font-mono truncate">
+            <div key={i} className="text-[11px] text-gray-500 font-mono truncate">
               <span style={{ color: C }}>{a.variable}</span>
               {a.expression ? <span className="text-gray-400"> = {a.expression}</span> : null}
             </div>
           ))}
           {data.assignments.length > 3 && (
-            <div className="text-xs text-gray-300">+{data.assignments.length - 3} more</div>
+            <div className="text-[11px] text-gray-300">+{data.assignments.length - 3} more</div>
           )}
         </div>
       )}
 
       {/* Warning: no destination configured */}
       {mode === 'export' && !data.destination && (
-        <div className="mx-3 mb-2 flex items-center gap-1 text-xs text-amber-400">
+        <div className="mx-3 mb-2 flex items-center gap-1 text-[11px] text-amber-400">
           <AlertTriangle size={10} />
           <span>No destination set</span>
         </div>

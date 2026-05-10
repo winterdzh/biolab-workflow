@@ -33,9 +33,9 @@ export const PORT_COLORS = {
 }
 
 // Row height per port
-const PORT_ROW_H = 24
+const PORT_ROW_H = 22
 // Fixed width for input/output columns
-const SIDE_COL_W = 110
+const SIDE_COL_W = 116
 
 export default function OperationNode({ data, selected }) {
   const nodeId = useNodeId()
@@ -94,7 +94,7 @@ export default function OperationNode({ data, selected }) {
         style={{ backgroundColor: 'rgba(255,255,255,0.55)', borderColor: 'rgba(0,0,0,0.05)', minHeight: 36 }}
       >
         <Settings size={12} style={{ color: C, flexShrink: 0 }} />
-        <span className="font-semibold text-gray-800 text-sm leading-tight truncate">{data.label}</span>
+        <span className="font-semibold text-[13px] tracking-[-0.01em] text-gray-800 leading-tight truncate">{data.label}</span>
       </div>
 
       {/* ── 3-column ports area ── */}
@@ -121,7 +121,7 @@ export default function OperationNode({ data, selected }) {
                   }}
                 />
                 <span
-                  className="text-xs pl-3 pr-1 truncate leading-tight"
+                  className="text-[11px] pl-3 pr-1 truncate leading-tight"
                   style={{ color: '#777', maxWidth: SIDE_COL_W - 12 }}
                   title={inp.label}
                 >
@@ -131,7 +131,7 @@ export default function OperationNode({ data, selected }) {
             )
           })}
           {computedInputs.length === 0 && (
-            <div className="text-xs text-gray-200 italic px-3 py-1">no inputs</div>
+            <div className="text-[11px] text-gray-200 italic px-3 py-1">no inputs</div>
           )}
           {/* ── Invisible drop-zone: accepts new connections from objects nodes ── */}
           <Handle
@@ -155,8 +155,8 @@ export default function OperationNode({ data, selected }) {
           <div
             className="flex items-start justify-start w-full h-full relative"
             style={{
-              margin: '6px 8px',
-              padding: '6px 8px',
+              margin: '8px 8px',
+              padding: '7px 9px',
               border: '1.5px dashed #bfdbfe',
               borderRadius: 10,
               backgroundColor: '#f8fbff',
@@ -180,7 +180,7 @@ export default function OperationNode({ data, selected }) {
             }
             {/* Description text */}
             <span
-              className="relative text-xs leading-relaxed"
+              className="relative text-[11px] leading-relaxed"
               style={{
                 zIndex: 1, wordBreak: 'break-word',
                 color: data.description ? '#6b7280' : '#bfdbfe',
@@ -205,7 +205,7 @@ export default function OperationNode({ data, selected }) {
             return (
               <div key={port.id} className="flex items-center relative" style={{ height: PORT_ROW_H }}>
                 <span
-                  className="text-xs pr-3 pl-1 truncate text-right flex-1 leading-tight"
+                  className="text-[11px] pr-3 pl-1 truncate text-right flex-1 leading-tight"
                   style={{ color: '#777', maxWidth: SIDE_COL_W - 12 }}
                   title={port.label}
                 >
@@ -226,7 +226,7 @@ export default function OperationNode({ data, selected }) {
             )
           })}
           {outputs.length === 0 && (
-            <div className="text-xs text-gray-200 italic px-3 py-1">no outputs</div>
+            <div className="text-[11px] text-gray-200 italic px-3 py-1">no outputs</div>
           )}
         </div>
       </div>
@@ -238,13 +238,13 @@ export default function OperationNode({ data, selected }) {
       >
         <Cpu size={10} className="flex-shrink-0" style={{ color: data.device ? '#FF9933' : '#ccc' }} />
         {data.device
-          ? <span className="text-xs text-gray-500 font-medium truncate">{data.device.name}</span>
-          : <span className="text-xs text-gray-300 italic">No device assigned</span>}
+          ? <span className="text-[11px] text-gray-500 font-medium truncate">{data.device.name}</span>
+          : <span className="text-[11px] text-gray-300 italic">No device assigned</span>}
         {data.duration?.value ? (
           <>
             <div className="flex-1" />
             <Clock size={10} className="flex-shrink-0" style={{ color: '#94a3b8' }} />
-            <span className="text-xs font-medium" style={{ color: '#94a3b8' }}>
+            <span className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>
               {data.duration.value} {data.duration.unit}
             </span>
           </>

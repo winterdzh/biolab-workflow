@@ -11,12 +11,12 @@ export default function ReagentNode({ data, selected }) {
       className={`bg-white border shadow-sm w-44 transition-all ${selected ? 'ring-2 ring-violet-100' : ''}`}
       style={{ borderColor: selected ? 'rgba(139,92,246,0.35)' : 'rgba(0,0,0,0.06)', borderRadius: 14, background: 'rgba(255,255,255,0.9)', boxShadow: selected ? '0 0 0 3px rgba(139,92,246,0.2), 0 4px 20px rgba(139,92,246,0.15)' : '0 4px 20px rgba(0,0,0,0.08)' }}
     >
-      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)' }}>
+      <div className="px-3 py-2.5 flex items-center gap-2 border-b" style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)' }}>
         <Droplets size={13} style={{ color: C, flexShrink: 0 }} />
-        <span className="font-semibold text-gray-800 text-sm leading-tight truncate flex-1">{data.label}</span>
+        <span className="font-semibold text-[13px] tracking-[-0.01em] text-gray-800 leading-tight truncate flex-1">{data.label}</span>
         {items.length > 0 && (
           <span
-            className="text-xs px-1.5 py-0.5 flex-shrink-0"
+            className="text-[11px] px-1.5 py-0.5 flex-shrink-0"
             style={{ backgroundColor: '#ede9fe', color: C, borderRadius: 8 }}
           >
             {items.length}
@@ -24,13 +24,13 @@ export default function ReagentNode({ data, selected }) {
         )}
       </div>
 
-      <div className="px-3 py-2">
+      <div className="px-3 py-2.5">
         {items.length === 0 ? (
-          <div className="text-xs text-gray-300 italic">No reagents</div>
+          <div className="text-[11px] text-gray-300 italic">No reagents</div>
         ) : (
           <div className="flex flex-col gap-0.5">
             {items.map((item) => (
-              <div key={item.id} className="relative flex items-center gap-1.5 text-xs text-gray-600" style={{ height: 20 }}>
+              <div key={item.id} className="relative flex items-center gap-1.5 text-[11px] text-gray-600" style={{ height: 21 }}>
                 <div className="w-1 h-1 rounded-full flex-shrink-0" style={{ backgroundColor: C }} />
                 <span className="truncate flex-1">{item.name}</span>
                 {item.concentration && (

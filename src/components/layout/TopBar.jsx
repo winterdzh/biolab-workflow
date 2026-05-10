@@ -76,6 +76,7 @@ export default function TopBar({ workflowId, isMobile = false }) {
 
   const ghost = 'inline-flex items-center gap-1.5 h-8 px-2.5 text-sm rounded-[10px] text-white hover:bg-white/14 transition-colors select-none'
   const outline = 'inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-[10px] border border-white/25 text-white hover:bg-white/14 transition-colors select-none'
+  const iconOutline = 'inline-flex items-center justify-center h-8 w-8 rounded-[10px] border border-white/25 text-white hover:bg-white/14 transition-colors select-none'
   const disabled = 'inline-flex items-center gap-1.5 h-8 px-2.5 text-sm rounded-[10px] text-white/30 cursor-not-allowed select-none'
   const primary = 'inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-[10px] bg-white text-[#CC0000] font-semibold hover:bg-red-50 transition-colors select-none shadow-sm'
 
@@ -87,6 +88,9 @@ export default function TopBar({ workflowId, isMobile = false }) {
         </button>
         <span className="text-sm font-medium text-white truncate flex-1 tracking-[-0.01em]">{name}</span>
         <span className="text-xs text-white/70 bg-white/12 px-2 py-0.5 rounded-[8px]">View only</span>
+        <button onClick={handleAutoLayout} className={iconOutline} title="Auto Layout">
+          <LayoutGrid size={14} />
+        </button>
         <button onClick={handleExport} className={primary} title="Download workflow JSON">
           <Download size={14} /> Export
         </button>
