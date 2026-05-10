@@ -348,6 +348,51 @@ function NodeProps({ node, edges, update, onCopy, onDelete, onUngroup }) {
   const { data, type } = node
   const isExperiment = type === 'experimentNode'
 
+  const addDataFiles = () => {
+    if (type !== 'dataNode') return
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.multiple = true
+    input.onchange = (e) => {
+      const files = Array.from(e.target.files ?? [])
+      if (!files.length) return
+
+      const currentImports = data.imports ?? []
+      const currentOutputs = data.outputs ?? []
+      const nextImports = [...currentImports]
+      const nextOutputs = [...currentOutputs]
+
+      files.forEach((file) => {
+        const outputId = uuidv4()
+        nextImports.push({
+          id: uuidv4(),
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          size: file.size,
+          lastModified: file.lastModified,
+          outputId,
+        })
+        // Each uploaded file gets its own output port/handle for downstream connections.
+        nextOutputs.push({ id: outputId, name: file.name })
+      })
+
+      update({ imports: nextImports, outputs: nextOutputs })
+    }
+    input.click()
+  }
+
+  const removeDataFile = (importId) => {
+    if (type !== 'dataNode') return
+    const currentImports = data.imports ?? []
+    const currentOutputs = data.outputs ?? []
+    const target = currentImports.find((f) => f.id === importId)
+    const nextImports = currentImports.filter((f) => f.id !== importId)
+    const nextOutputs = target?.outputId
+      ? currentOutputs.filter((o) => o.id !== target.outputId)
+      : currentOutputs
+    update({ imports: nextImports, outputs: nextOutputs })
+  }
+
   return (
     <div className="flex flex-col">
       <ActionBar onCopy={onCopy} onDelete={onDelete} isExperiment={isExperiment} />
@@ -755,11 +800,36 @@ function NodeProps({ node, edges, update, onCopy, onDelete, onUngroup }) {
             </div>
           </Field>
 
-          {/* Import interface - reserved */}
+          {/* File imports: each uploaded file creates a dedicated output handle */}
           <Field label="File Imports">
-            <div className="border border-dashed border-gray-200 px-3 py-2.5 flex flex-col items-center gap-1" style={{ borderRadius: 4 }}>
-              <Upload size={14} className="text-gray-200" />
-              <div className="text-xs text-gray-300 italic text-center">File import interface<br />— coming soon —</div>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={addDataFiles}
+                className="w-full h-8 inline-flex items-center justify-center gap-1.5 border border-dashed border-gray-300 text-xs text-gray-600 hover:border-teal-400 hover:text-teal-600 transition-colors"
+                style={{ borderRadius: 6 }}
+              >
+                <Upload size={12} /> Upload files
+              </button>
+
+              {(data.imports ?? []).length === 0 ? (
+                <div className="text-xs text-gray-300 italic px-1">No files uploaded yet</div>
+              ) : (
+                <div className="flex flex-col gap-1">
+                  {(data.imports ?? []).map((f) => (
+                    <div key={f.id} className="flex items-center gap-2 px-2 py-1 border border-gray-100 text-xs text-gray-600" style={{ borderRadius: 4 }}>
+                      <span className="truncate flex-1" title={f.name}>{f.name}</span>
+                      <span className="text-gray-300 flex-shrink-0">→ port</span>
+                      <button
+                        onClick={() => removeDataFile(f.id)}
+                        className="text-gray-300 hover:text-red-400 flex-shrink-0"
+                        title="Remove file and its output port"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </Field>
 
