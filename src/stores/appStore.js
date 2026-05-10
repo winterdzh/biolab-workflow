@@ -4,14 +4,35 @@ import { DEMO_WORKFLOW } from '../data/demoWorkflow'
 
 const APP_STATE_STORAGE_KEY = 'biolab.appState.v1'
 const CONFIDENTIAL_NAME_REGEX = /(oligo|cell\s*culture|cell\s*processing|bac[-\s]?expression)/i
+const REMOVED_PLACEHOLDER_NAMES = new Set(['plasmid transfection', 'cell seeding'])
+
+function normalizeName(name = '') {
+  return String(name).trim().toLowerCase()
+}
+
+function orderWorkflows(workflows = []) {
+  const demoId = DEMO_WORKFLOW.id
+  const demo = workflows.find((w) => w.id === demoId)
+  const rest = workflows.filter((w) => w.id !== demoId)
+  return demo ? [demo, ...rest] : rest
+}
+
+function ensureDemoWorkflow(workflows = []) {
+  const demoId = DEMO_WORKFLOW.id
+  if (workflows.some((w) => w.id === demoId)) return workflows
+  return [DEMO_WORKFLOW, ...workflows]
+}
 
 function sanitizeWorkflows(workflows = []) {
-  return (workflows ?? []).filter((w) => {
+  const filtered = (workflows ?? []).filter((w) => {
     if (!w) return false
     const name = String(w.name ?? '')
     const tags = Array.isArray(w.tags) ? w.tags.join(' ') : ''
+    const normalizedName = normalizeName(name)
+    if (REMOVED_PLACEHOLDER_NAMES.has(normalizedName)) return false
     return !(CONFIDENTIAL_NAME_REGEX.test(name) || CONFIDENTIAL_NAME_REGEX.test(tags))
   })
+  return orderWorkflows(ensureDemoWorkflow(filtered))
 }
 
 function getWorkflowFingerprint(workflows = []) {
@@ -74,7 +95,7 @@ function makeWorkflow(name = 'New Workflow') {
 }
 
 const persisted = loadPersistedAppState()
-const defaultWorkflows = [DEMO_WORKFLOW]
+const defaultWorkflows = orderWorkflows([DEMO_WORKFLOW])
 const initialWorkflows = (persisted?.workflows?.length ? persisted.workflows : defaultWorkflows)
 const initialGlobalVariables = persisted?.globalVariables ?? [
   { id: 'gv1', name: 'projectName', type: 'string', value: 'My Project', description: 'Project identifier' },
@@ -131,7 +152,7 @@ const useAppStore = create((set, get) => ({
   // ── Workflow CRUD
   createWorkflow: (name, description = '') => {
     const wf = { ...makeWorkflow(name), description }
-    set({ workflows: [...get().workflows, wf] })
+    set({ workflows: orderWorkflows([...get().workflows, wf]) })
     return wf.id
   },
 
@@ -139,7 +160,7 @@ const useAppStore = create((set, get) => ({
     const src = get().workflows.find((w) => w.id === id)
     if (!src) return
     const copy = { ...JSON.parse(JSON.stringify(src)), id: uuidv4(), name: src.name + ' (copy)', createdAt: new Date().toISOString(), modifiedAt: new Date().toISOString() }
-    set({ workflows: [...get().workflows, copy] })
+    set({ workflows: orderWorkflows([...get().workflows, copy]) })
   },
 
   deleteWorkflow: (id) =>
