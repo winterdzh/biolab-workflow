@@ -18,7 +18,7 @@ const NODE_COLORS = {
 // Object node types — cannot participate in workflow flow edges
 const OBJECT_NODE_TYPES = new Set(['sampleNode', 'labwareNode', 'reagentNode', 'dataNode'])
 
-export default function WorkflowCanvas() {
+export default function WorkflowCanvas({ readOnly = false }) {
   const reactFlowWrapper = useRef(null)
   const [rfInstance, setRfInstance] = useState(null)
   const [showMinimap, setShowMinimap] = useState(true)
@@ -28,6 +28,7 @@ export default function WorkflowCanvas() {
 
   // Keyboard shortcuts: Ctrl+C copy selected node, Ctrl+V paste
   useEffect(() => {
+    if (readOnly) return
     const handler = (e) => {
       // Don't fire when typing in an input
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return
@@ -163,14 +164,15 @@ export default function WorkflowCanvas() {
         onDrop={onDrop} onDragOver={onDragOver}
         onNodeClick={onNodeClick} onEdgeClick={onEdgeClick} onPaneClick={onPaneClick}
         nodeTypes={nodeTypes} edgeTypes={edgeTypes}
-        fitView deleteKeyCode="Delete"
-        selectionOnDrag panOnDrag={[1, 2]}
+        fitView deleteKeyCode={readOnly ? null : 'Delete'}
+        selectionOnDrag={!readOnly} panOnDrag={readOnly ? true : [1, 2]}
+        nodesDraggable={!readOnly} nodesConnectable={!readOnly} elementsSelectable={!readOnly}
         elevateEdgesOnSelect
       >
-        <SelectionToolbar />
+        {!readOnly && <SelectionToolbar />}
 
         {/* Paste button — only visible when clipboard has content */}
-        {clipboard && (
+        {!readOnly && clipboard && (
           <Panel position="bottom-center" style={{ marginBottom: 12 }}>
             <button
               onClick={pasteNode}

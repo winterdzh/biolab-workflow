@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, Undo2, Redo2, BookOpen, Hash, LayoutGrid, Download, HelpCircle, Eye } from 'lucide-react'
+import { ChevronLeft, Undo2, Redo2, BookOpen, Hash, LayoutGrid, Download, HelpCircle, Eye, Link } from 'lucide-react'
+import { encodeWorkflowForURL } from '../../utils/importExport'
 import useWorkflowStore from '../../stores/workflowStore'
 import useAppStore from '../../stores/appStore'
 import useLibraryStore from '../../stores/libraryStore'
@@ -20,7 +21,7 @@ const FLOW_FILTERS = [
   { key: 'data',     label: 'Data / Info', color: '#009688' },
 ]
 
-export default function TopBar({ workflowId }) {
+export default function TopBar({ workflowId, isMobile = false }) {
   const { nodes, edges, undo, redo, canUndo, canRedo, loadWorkflow } = useWorkflowStore()
   const appStore = useAppStore()
   const libraryStore = useLibraryStore()
@@ -33,6 +34,7 @@ export default function TopBar({ workflowId }) {
   const [showWfVars, setShowWfVars] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [showViewFilter, setShowViewFilter] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => { setName(wf?.name ?? '') }, [wf?.name])
 
@@ -65,6 +67,17 @@ export default function TopBar({ workflowId }) {
     URL.revokeObjectURL(url)
   }
 
+  const handleShare = () => {
+    const json = appStore.exportWorkflowJSON(workflowId, libraryStore)
+    if (!json) return
+    const encoded = encodeWorkflowForURL(json)
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}?wf=${encoded}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
   const handleAutoLayout = () => {
     if (!nodes.length) return
     loadWorkflow({ nodes: applyAutoLayout(nodes, edges), edges, workflowName: wf?.name })
@@ -78,6 +91,21 @@ export default function TopBar({ workflowId }) {
   const outline = 'inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded border border-white/35 text-white hover:bg-white/15 transition-colors select-none'
   const disabled = 'inline-flex items-center gap-1.5 h-8 px-2.5 text-sm rounded text-white/30 cursor-not-allowed select-none'
   const primary = 'inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded bg-white text-[#CC0000] font-semibold hover:bg-red-50 transition-colors select-none'
+
+  if (isMobile) {
+    return (
+      <div className="h-12 bg-[#CC0000] flex items-center px-3 gap-2 flex-shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+        <button onClick={handleSaveAndBack} className="inline-flex items-center justify-center w-8 h-8 text-white hover:bg-white/15 transition-colors rounded">
+          <ChevronLeft size={20} />
+        </button>
+        <span className="text-sm font-medium text-white truncate flex-1">{name}</span>
+        <span className="text-xs text-white/60 bg-white/10 px-2 py-0.5 rounded-sm">View only</span>
+        <button onClick={handleShare} className={copied ? primary : outline} title="Copy share link">
+          <Link size={14} /> {copied ? 'Copied!' : 'Share'}
+        </button>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -161,6 +189,9 @@ export default function TopBar({ workflowId }) {
             </>
           )}
         </div>
+        <button onClick={handleShare} className={copied ? primary : outline} title="Copy share link">
+          <Link size={14} /> {copied ? 'Copied!' : 'Share'}
+        </button>
         <button onClick={handleExport} className={primary}>
           <Download size={14} /> Export
         </button>

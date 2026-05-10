@@ -31,3 +31,18 @@ export function importWorkflow(jsonString) {
     return null
   }
 }
+
+// ── URL sharing helpers ───────────────────────────────────────────────────────
+// Encodes a workflow JSON string to a URL-safe base64url string (UTF-8 safe).
+export function encodeWorkflowForURL(jsonString) {
+  const bytes = new TextEncoder().encode(jsonString)
+  const binStr = Array.from(bytes, (b) => String.fromCharCode(b)).join('')
+  return btoa(binStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+// Decodes a base64url string back to a JSON string.
+export function decodeWorkflowFromURL(encoded) {
+  const binStr = atob(encoded.replace(/-/g, '+').replace(/_/g, '/'))
+  const bytes = Uint8Array.from(binStr, (c) => c.charCodeAt(0))
+  return new TextDecoder().decode(bytes)
+}
