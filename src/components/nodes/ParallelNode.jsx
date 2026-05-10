@@ -2,8 +2,8 @@ import { Handle, Position } from '@xyflow/react'
 import { GitFork } from 'lucide-react'
 
 const C   = '#FF9933'  // orange — control
-const CBG = '#fff7ed'  // orange-50
-const CBR = '#fed7aa'  // orange-200
+const CBG = 'rgba(255,255,255,0.9)'
+const CBR = 'rgba(0,0,0,0.06)'
 
 // Compact width: left-in → right-out layout
 const W        = 140
@@ -26,10 +26,10 @@ export default function ParallelNode({ data, selected }) {
         height: totalH,
         borderColor: selected ? C : CBR,
         backgroundColor: CBG,
-        borderRadius: 6,
-        borderWidth: selected ? 2 : 1.5,
+        borderRadius: 14,
+        borderWidth: selected ? 2 : 1,
         borderStyle: 'solid',
-        boxShadow: selected ? `0 0 0 3px ${C}22` : '0 1px 4px rgba(0,0,0,0.08)',
+        boxShadow: selected ? '0 0 0 3px rgba(255,153,51,0.2), 0 4px 20px rgba(0,0,0,0.12)' : '0 4px 20px rgba(0,0,0,0.08)',
         position: 'relative',
       }}
     >
@@ -47,7 +47,7 @@ export default function ParallelNode({ data, selected }) {
       {/* Header */}
       <div
         className="flex items-center gap-1.5 px-2.5"
-        style={{ height: HEADER_H, borderBottom: `1px solid ${CBR}` }}
+        style={{ height: HEADER_H, borderBottom: '1px solid rgba(0,0,0,0.05)' }}
       >
         <GitFork size={12} style={{ color: C, flexShrink: 0 }} />
         <span className="font-semibold text-xs truncate" style={{ color: '#92400e' }}>

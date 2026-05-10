@@ -24,11 +24,11 @@ export default function SampleNode({ data, selected }) {
   return (
     <div
       className={`bg-white border shadow-sm w-44 transition-all ${selected ? 'ring-2 ring-green-100' : ''}`}
-      style={{ borderColor: selected ? C : '#93c5fd', borderRadius: 4 }}
+      style={{ borderColor: selected ? 'rgba(59,130,246,0.35)' : 'rgba(0,0,0,0.06)', borderRadius: 14, background: 'rgba(255,255,255,0.9)', boxShadow: selected ? '0 0 0 3px rgba(59,130,246,0.2), 0 4px 20px rgba(59,130,246,0.15)' : '0 4px 20px rgba(0,0,0,0.08)' }}
     >
       <Handle id="mat-in" type="target" position={Position.Left} className="!w-3 !h-3 !border-2 !border-white" style={{ backgroundColor: C }} />
 
-      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: '#eff6ff', borderColor: '#bfdbfe' }}>
+      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)' }}>
         <FlaskConical size={13} style={{ color: C, flexShrink: 0 }} />
         <span className="font-semibold text-gray-800 text-sm leading-tight truncate">{data.label}</span>
       </div>
@@ -56,7 +56,7 @@ export default function SampleNode({ data, selected }) {
         {data.storageTemp && (
           <div
             className="inline-flex items-center text-xs px-1.5 py-0.5 mt-0.5"
-            style={{ backgroundColor: '#dbeafe', color: '#1d4ed8', borderRadius: 3 }}
+            style={{ backgroundColor: '#dbeafe', color: '#1d4ed8', borderRadius: 8 }}
           >
             {data.storageTemp}
           </div>

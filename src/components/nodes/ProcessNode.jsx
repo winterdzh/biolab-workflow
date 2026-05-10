@@ -22,10 +22,11 @@ export default function ProcessNode({ data, selected }) {
     <div
       className="bg-white border shadow-sm transition-all"
       style={{
-        borderColor: selected ? C : '#c4b5fd',
-        borderRadius: 6,
+        borderColor: selected ? 'rgba(124,58,237,0.35)' : 'rgba(0,0,0,0.06)',
+        borderRadius: 14,
         width: 200,
-        boxShadow: selected ? `0 0 0 3px ${C}22` : '0 1px 4px rgba(0,0,0,0.10)',
+        background: 'rgba(255,255,255,0.9)',
+        boxShadow: selected ? '0 0 0 3px rgba(124,58,237,0.22), 0 4px 24px rgba(0,0,0,0.12)' : '0 4px 20px rgba(0,0,0,0.09)',
       }}
     >
       {/* Workflow flow handles */}
@@ -45,7 +46,7 @@ export default function ProcessNode({ data, selected }) {
       {/* Header */}
       <div
         className="flex items-center gap-2 px-3 py-2 border-b"
-        style={{ backgroundColor: '#f5f3ff', borderColor: '#ddd6fe', minHeight: 36 }}
+        style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)', minHeight: 36 }}
       >
         <Cpu size={12} style={{ color: C, flexShrink: 0 }} />
         <span className="font-semibold text-gray-800 text-sm leading-tight truncate flex-1">

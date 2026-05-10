@@ -78,9 +78,9 @@ function WorkflowEditor({ workflowId, isMobile }) {
 
   if (isMobile) {
     return (
-      <div className="flex flex-col h-screen bg-white overflow-hidden">
+      <div className="flex flex-col h-screen overflow-hidden" style={{ background: 'var(--ui-bg)' }}>
         <TopBar workflowId={workflowId} isMobile />
-        <main className="flex-1 overflow-hidden bg-gray-50">
+        <main className="flex-1 overflow-hidden" style={{ background: 'var(--ui-bg)' }}>
           <WorkflowCanvas readOnly />
         </main>
       </div>
@@ -88,12 +88,12 @@ function WorkflowEditor({ workflowId, isMobile }) {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden" style={{ background: 'var(--ui-bg)' }}>
       <TopBar workflowId={workflowId} />
       <div className="flex flex-1 overflow-hidden">
         <LeftPanel width={leftW} />
         <ResizeDivider onDrag={dragLeft} />
-        <main className="flex-1 overflow-hidden bg-gray-50">
+        <main className="flex-1 overflow-hidden" style={{ background: 'var(--ui-bg)' }}>
           <WorkflowCanvas />
         </main>
         <ResizeDivider onDrag={dragRight} />

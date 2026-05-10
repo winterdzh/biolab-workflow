@@ -7,10 +7,10 @@ export default function IfElseNode({ data, selected }) {
   return (
     <div
       className={`bg-white border shadow-sm w-44 transition-all ${selected ? 'ring-2 ring-yellow-100' : ''}`}
-      style={{ borderColor: selected ? C : '#dddd88', borderRadius: 4 }}
+      style={{ borderColor: selected ? 'rgba(255,153,51,0.35)' : 'rgba(0,0,0,0.06)', borderRadius: 14, background: 'rgba(255,255,255,0.9)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
     >
       <Handle type="target" position={Position.Left} id="flow-in" className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: C }} />
-      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: '#fafae8', borderColor: '#ebebaa' }}>
+      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)' }}>
         <GitBranch size={13} style={{ color: C, flexShrink: 0 }} />
         <span className="font-semibold text-gray-800 text-sm">{data.label}</span>
       </div>

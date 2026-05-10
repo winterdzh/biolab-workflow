@@ -22,10 +22,10 @@ function UploadCard({ onFile }) {
   return (
     <div
       onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop} onClick={onClick}
-      className={`border-2 border-dashed p-5 flex flex-col items-center justify-center cursor-pointer transition-all min-h-[148px] select-none ${
-        dragOver ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-gray-50 hover:border-red-300 hover:bg-red-50/40'
+      className={`border-2 border-dashed p-5 flex flex-col items-center justify-center cursor-pointer transition-all min-h-[148px] select-none apple-card ${
+        dragOver ? 'border-red-400 bg-red-50/75' : 'border-red-200/70 bg-white/70 hover:border-red-300 hover:bg-red-50/45'
       }`}
-      style={{ borderRadius: 4 }}
+      style={{ borderRadius: 14 }}
     >
       <input ref={inputRef} type="file" accept=".json" className="hidden" onChange={onInputChange} />
       <Upload size={24} className={`mb-2 transition-transform ${dragOver ? 'scale-125 text-red-400' : 'text-gray-400'}`} />
@@ -40,13 +40,13 @@ function WorkflowCard({ wf, onOpen, onDuplicate, onDelete, onExport }) {
   const date = new Date(wf.modifiedAt).toLocaleDateString()
   return (
     <div
-      className="bg-white border border-gray-200 p-4 hover:shadow-md hover:border-gray-300 transition-all group cursor-pointer relative flex flex-col gap-3"
-      style={{ borderRadius: 4 }}
+      className="apple-card border border-black/5 p-4 hover:shadow-xl transition-all group cursor-pointer relative flex flex-col gap-3"
+      style={{ borderRadius: 14 }}
       onClick={onOpen}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#fde8e8', borderRadius: 4 }}>
+          <div className="w-9 h-9 flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(253,232,232,0.92)', borderRadius: 10 }}>
             <FlaskConical size={18} style={{ color: '#CC0000' }} />
           </div>
           <div>
@@ -58,7 +58,7 @@ function WorkflowCard({ wf, onOpen, onDuplicate, onDelete, onExport }) {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="opacity-0 group-hover:opacity-100 transition-opacity w-7 h-7 hover:bg-gray-100 flex items-center justify-center text-gray-400"
-            style={{ borderRadius: 4 }}
+            style={{ borderRadius: 10 }}
           ><MoreHorizontal size={16} /></button>
           {menuOpen && (
             <div
@@ -90,7 +90,7 @@ function NewWorkflowModal({ onClose, onCreate }) {
   const [desc, setDesc] = useState('')
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white shadow-2xl w-96 overflow-hidden" style={{ borderRadius: 4 }}>
+      <div className="bg-white/90 shadow-2xl w-96 overflow-hidden" style={{ borderRadius: 20, backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)' }}>
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="font-semibold text-gray-800">New Workflow</h2>
         </div>
@@ -99,22 +99,22 @@ function NewWorkflowModal({ onClose, onCreate }) {
             <label className="text-xs font-medium text-gray-500 block mb-1">Name <span className="text-red-500">*</span></label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Cell Seeding Protocol"
               autoFocus
-              className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100" style={{ borderRadius: 4 }} />
+              className="w-full apple-input px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-100" style={{ borderRadius: 10 }} />
           </div>
           <div>
             <label className="text-xs font-medium text-gray-500 block mb-1">Description</label>
             <textarea value={desc} onChange={(e) => setDesc(e.target.value)} rows={3}
               placeholder="Brief description of this workflow..."
-              className="w-full border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100 resize-none" style={{ borderRadius: 4 }} />
+              className="w-full apple-input px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-100 resize-none" style={{ borderRadius: 10 }} />
           </div>
         </div>
         <div className="px-6 py-3 border-t border-gray-100 flex gap-2">
           <button onClick={() => name.trim() && onCreate(name.trim(), desc)} disabled={!name.trim()}
             className={`flex-1 h-8 text-sm font-medium transition-colors ${name.trim() ? 'bg-[#CC0000] text-white hover:bg-red-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
-            style={{ borderRadius: 4 }}>
+            style={{ borderRadius: 10 }}>
             Create
           </button>
-          <button onClick={onClose} className="flex-1 h-8 text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors" style={{ borderRadius: 4 }}>Cancel</button>
+          <button onClick={onClose} className="flex-1 h-8 text-sm border border-gray-200/80 text-gray-600 hover:bg-gray-50 transition-colors" style={{ borderRadius: 10 }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -186,9 +186,9 @@ export default function CoverPage() {
   }, [appStore])
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--ui-bg)' }}>
       {/* Header */}
-      <div className="bg-[#CC0000]" style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+      <div style={{ background: 'rgba(180,0,0,0.92)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)', boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.15)' }}>
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center gap-3">
           <div className="flex items-center gap-2.5">
             <FlaskConical size={24} color="white" />
@@ -199,27 +199,27 @@ export default function CoverPage() {
           </div>
           <div className="flex-1" />
           <button onClick={() => setShowGlobalVars(true)}
-            className="inline-flex items-center gap-1.5 h-8 px-3 border border-white/35 text-white text-sm hover:bg-white/15 transition-colors"
-            style={{ borderRadius: 4 }}>
+            className="inline-flex items-center gap-1.5 h-8 px-3 border border-white/25 text-white text-sm hover:bg-white/14 transition-colors"
+            style={{ borderRadius: 10 }}>
             <Hash size={14} /> Global Variables
             {appStore.globalVariables.length > 0 && (
-              <span className="bg-white text-[#CC0000] text-xs px-1.5 rounded-sm font-semibold leading-4">{appStore.globalVariables.length}</span>
+              <span className="bg-white text-[#CC0000] text-xs px-1.5 rounded-[8px] font-semibold leading-4">{appStore.globalVariables.length}</span>
             )}
           </button>
           <button onClick={() => setShowLibrary(true)}
-            className="inline-flex items-center gap-1.5 h-8 px-3 border border-white/35 text-white text-sm hover:bg-white/15 transition-colors"
-            style={{ borderRadius: 4 }}>
+            className="inline-flex items-center gap-1.5 h-8 px-3 border border-white/25 text-white text-sm hover:bg-white/14 transition-colors"
+            style={{ borderRadius: 10 }}>
             Library
           </button>
           <div className="w-px h-5 bg-white/25" />
           <button onClick={handleImportAll}
-            className="inline-flex items-center gap-1.5 h-8 px-3 border border-white/35 text-white text-sm hover:bg-white/15 transition-colors"
-            style={{ borderRadius: 4 }}>
+            className="inline-flex items-center gap-1.5 h-8 px-3 border border-white/25 text-white text-sm hover:bg-white/14 transition-colors"
+            style={{ borderRadius: 10 }}>
             <Upload size={14} /> Import All
           </button>
           <button onClick={handleExportAll}
-            className="inline-flex items-center gap-1.5 h-8 px-3 bg-white text-[#CC0000] text-sm font-semibold hover:bg-red-50 transition-colors"
-            style={{ borderRadius: 4 }}>
+            className="inline-flex items-center gap-1.5 h-8 px-3 bg-white text-[#CC0000] text-sm font-semibold hover:bg-red-50 transition-colors shadow-sm"
+            style={{ borderRadius: 10 }}>
             <Download size={14} /> Export All
           </button>
         </div>
@@ -231,12 +231,12 @@ export default function CoverPage() {
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
             <input value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder="Search workflows..."
-              className="w-full border border-gray-200 pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:border-red-400 bg-white" style={{ borderRadius: 4 }} />
+              className="w-full apple-input pl-8 pr-3 py-1.5 text-sm focus:outline-none" style={{ borderRadius: 10 }} />
           </div>
           <div className="flex-1" />
           <button onClick={() => setShowNewModal(true)}
-            className="inline-flex items-center gap-1.5 h-8 px-3 bg-[#CC0000] text-white text-sm font-medium hover:bg-red-800 transition-colors"
-            style={{ borderRadius: 4 }}>
+            className="inline-flex items-center gap-1.5 h-8 px-3 bg-[#CC0000] text-white text-sm font-medium hover:bg-red-800 transition-colors shadow-sm"
+            style={{ borderRadius: 10 }}>
             <Plus size={15} /> New Workflow
           </button>
         </div>

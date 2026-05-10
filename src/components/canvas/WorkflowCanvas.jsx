@@ -184,19 +184,21 @@ export default function WorkflowCanvas({ readOnly = false }) {
           </Panel>
         )}
 
-        <Background variant={BackgroundVariant.Lines} gap={24} lineWidth={1} color="#e8eaed" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgba(60,60,67,0.25)" />
         <Controls />
         {/* MiniMap + toggle button — wrapped together so they never overlap */}
-        <Panel position="bottom-right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+        <Panel position="bottom-right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
           <button
             onClick={() => setShowMinimap(v => !v)}
             title={showMinimap ? 'Hide minimap' : 'Show minimap'}
             style={{
-              padding: '2px 7px', fontSize: 10, lineHeight: 1.4,
-              background: 'white', border: '1px solid #d1d5db',
-              borderRadius: 4, cursor: 'pointer', color: '#6b7280',
+              padding: '3px 8px', fontSize: 10, lineHeight: 1.4,
+              background: 'rgba(250,250,252,0.9)', border: '1px solid rgba(0,0,0,0.06)',
+              borderRadius: 10, cursor: 'pointer', color: '#6e6e73',
               display: 'flex', alignItems: 'center', gap: 3,
-              boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
             }}
           >
             {showMinimap ? '▾' : '▸'} map
@@ -205,7 +207,7 @@ export default function WorkflowCanvas({ readOnly = false }) {
             <MiniMap
               nodeColor={(n) => NODE_COLORS[n.type] ?? '#999999'}
               maskColor="rgba(240,240,240,0.6)"
-              style={{ position: 'static', border: '1px solid #d1d5db', borderRadius: 6, boxShadow: '0 1px 4px rgba(0,0,0,0.08)', margin: 0 }}
+              style={{ position: 'static', border: '1px solid rgba(0,0,0,0.06)', borderRadius: 14, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', margin: 0, background: 'rgba(250,250,252,0.9)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
             />
           )}
         </Panel>

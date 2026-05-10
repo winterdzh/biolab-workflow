@@ -10,7 +10,7 @@ import LibraryModal from '../library/LibraryModal'
 import GlobalVariablesPanel from '../panels/GlobalVariablesPanel'
 import HelpModal from '../help/HelpModal'
 
-const Sep = () => <div className="w-px h-5 bg-white/25 mx-0.5 flex-shrink-0" />
+const Sep = () => <div className="w-px h-5 bg-white/20 mx-1 flex-shrink-0" />
 
 const FLOW_FILTERS = [
   { key: 'workflow', label: 'Workflow',    color: '#64748b' },
@@ -74,19 +74,19 @@ export default function TopBar({ workflowId, isMobile = false }) {
   const _canRedo = canRedo()
   const wfVarCount = varStore.variables.length
 
-  const ghost = 'inline-flex items-center gap-1.5 h-8 px-2.5 text-sm rounded text-white hover:bg-white/15 transition-colors select-none'
-  const outline = 'inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded border border-white/35 text-white hover:bg-white/15 transition-colors select-none'
-  const disabled = 'inline-flex items-center gap-1.5 h-8 px-2.5 text-sm rounded text-white/30 cursor-not-allowed select-none'
-  const primary = 'inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded bg-white text-[#CC0000] font-semibold hover:bg-red-50 transition-colors select-none'
+  const ghost = 'inline-flex items-center gap-1.5 h-8 px-2.5 text-sm rounded-[10px] text-white hover:bg-white/14 transition-colors select-none'
+  const outline = 'inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-[10px] border border-white/25 text-white hover:bg-white/14 transition-colors select-none'
+  const disabled = 'inline-flex items-center gap-1.5 h-8 px-2.5 text-sm rounded-[10px] text-white/30 cursor-not-allowed select-none'
+  const primary = 'inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-[10px] bg-white text-[#CC0000] font-semibold hover:bg-red-50 transition-colors select-none shadow-sm'
 
   if (isMobile) {
     return (
-      <div className="h-12 bg-[#CC0000] flex items-center px-3 gap-2 flex-shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-        <button onClick={handleSaveAndBack} className="inline-flex items-center justify-center w-8 h-8 text-white hover:bg-white/15 transition-colors rounded">
+      <div className="h-12 flex items-center px-3 gap-2 flex-shrink-0" style={{ background: 'rgba(180,0,0,0.92)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)', boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.15)' }}>
+        <button onClick={handleSaveAndBack} className="inline-flex items-center justify-center w-8 h-8 text-white hover:bg-white/14 transition-colors rounded-[10px]">
           <ChevronLeft size={20} />
         </button>
-        <span className="text-sm font-medium text-white truncate flex-1">{name}</span>
-        <span className="text-xs text-white/60 bg-white/10 px-2 py-0.5 rounded-sm">View only</span>
+        <span className="text-sm font-medium text-white truncate flex-1 tracking-[-0.01em]">{name}</span>
+        <span className="text-xs text-white/70 bg-white/12 px-2 py-0.5 rounded-[8px]">View only</span>
         <button onClick={handleExport} className={primary} title="Download workflow JSON">
           <Download size={14} /> Export
         </button>
@@ -96,7 +96,7 @@ export default function TopBar({ workflowId, isMobile = false }) {
 
   return (
     <>
-      <div className="h-12 bg-[#CC0000] flex items-center px-3 gap-1 flex-shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+      <div className="h-12 flex items-center px-3 gap-1 flex-shrink-0" style={{ background: 'rgba(180,0,0,0.92)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)', boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.15)' }}>
         <button onClick={handleSaveAndBack} className={ghost}>
           <ChevronLeft size={16} /> Back
         </button>
@@ -110,7 +110,7 @@ export default function TopBar({ workflowId, isMobile = false }) {
         <Sep />
         <input
           value={name} onChange={(e) => setName(e.target.value)} onBlur={handleNameBlur}
-          className="h-8 border border-white/30 rounded px-2.5 text-sm text-white bg-white/10 placeholder-white/50 focus:outline-none focus:border-white focus:bg-white/20 w-44"
+          className="h-8 border border-white/25 rounded-[10px] px-2.5 text-sm text-white bg-white/12 placeholder-white/55 focus:outline-none focus:border-white/40 focus:bg-white/16 w-44"
           placeholder="Workflow name..."
         />
         <div className="flex-1" />
@@ -134,7 +134,7 @@ export default function TopBar({ workflowId, isMobile = false }) {
           {showViewFilter && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowViewFilter(false)} />
-              <div className="absolute top-full right-0 mt-1.5 bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-2" style={{ width: 210 }}>
+              <div className="absolute top-full right-0 mt-1.5 border border-black/5 rounded-[12px] shadow-xl z-50 p-2" style={{ width: 210, background: 'rgba(250,250,252,0.92)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)' }}>
                 <div className="flex items-center justify-between mb-1.5 px-1">
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Show Flows</span>
                   <div className="flex gap-2">

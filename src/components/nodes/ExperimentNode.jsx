@@ -7,16 +7,16 @@ export default function ExperimentNode({ data, selected }) {
         isVisible={selected}
         minWidth={200}
         minHeight={150}
-        lineStyle={{ border: '1.5px dashed #CC0000', opacity: 0.6 }}
-        handleStyle={{ width: 6, height: 6, borderRadius: 2, backgroundColor: '#CC0000', border: 'none' }}
+        lineStyle={{ border: '1.5px dashed #CC0000', opacity: 0.5 }}
+        handleStyle={{ width: 7, height: 7, borderRadius: 3, backgroundColor: '#CC0000', border: 'none' }}
       />
       <div
         style={{
           width: '100%',
           height: '100%',
-          border: '2px dashed #CC0000',
-          borderRadius: 4,
-          backgroundColor: 'rgba(204,0,0,0.025)',
+          border: '2px dashed rgba(204,0,0,0.8)',
+          borderRadius: 14,
+          backgroundColor: 'rgba(204,0,0,0.03)',
           boxSizing: 'border-box',
           overflow: 'hidden',
           pointerEvents: 'none',
@@ -25,8 +25,8 @@ export default function ExperimentNode({ data, selected }) {
         <div
           style={{
             padding: '7px 12px',
-            borderBottom: '1.5px dashed rgba(204,0,0,0.25)',
-            backgroundColor: 'rgba(204,0,0,0.05)',
+            borderBottom: '1.5px dashed rgba(204,0,0,0.22)',
+            backgroundColor: 'rgba(204,0,0,0.06)',
             pointerEvents: 'all',
             display: 'flex',
             alignItems: 'center',

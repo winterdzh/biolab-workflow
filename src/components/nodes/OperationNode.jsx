@@ -65,10 +65,13 @@ export default function OperationNode({ data, selected }) {
     <div
       className="bg-white border shadow-sm transition-all"
       style={{
-        borderColor: selected ? C : '#93c5fd',
-        borderRadius: 6,
+        borderColor: selected ? 'rgba(59,130,246,0.35)' : 'rgba(0,0,0,0.06)',
+        borderRadius: 14,
         width: 360,
-        boxShadow: selected ? `0 0 0 3px ${C}33` : '0 1px 4px rgba(0,0,0,0.10)',
+        background: 'rgba(255,255,255,0.9)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        boxShadow: selected ? '0 0 0 3px rgba(0,122,255,0.25), 0 4px 24px rgba(0,0,0,0.12)' : '0 4px 20px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.06)',
       }}
     >
       {/* ── Flow handles (top of left/right edge) ── */}
@@ -88,7 +91,7 @@ export default function OperationNode({ data, selected }) {
       {/* ── Header ── */}
       <div
         className="flex items-center gap-2 px-3 py-2 border-b"
-        style={{ backgroundColor: '#eff6ff', borderColor: '#bfdbfe', minHeight: 36 }}
+        style={{ backgroundColor: 'rgba(255,255,255,0.55)', borderColor: 'rgba(0,0,0,0.05)', minHeight: 36 }}
       >
         <Settings size={12} style={{ color: C, flexShrink: 0 }} />
         <span className="font-semibold text-gray-800 text-sm leading-tight truncate">{data.label}</span>
@@ -155,7 +158,7 @@ export default function OperationNode({ data, selected }) {
               margin: '6px 8px',
               padding: '6px 8px',
               border: '1.5px dashed #bfdbfe',
-              borderRadius: 5,
+              borderRadius: 10,
               backgroundColor: '#f8fbff',
               cursor: 'default',
               minHeight: Math.max(portsH - 12, 48),
@@ -231,7 +234,7 @@ export default function OperationNode({ data, selected }) {
       {/* ── Device footer ── */}
       <div
         className="flex items-center gap-1.5 px-3 py-1.5 border-t"
-        style={{ borderColor: '#ffe0b2', backgroundColor: '#fffcf8' }}
+        style={{ borderColor: 'rgba(0,0,0,0.05)', backgroundColor: 'rgba(255,255,255,0.52)' }}
       >
         <Cpu size={10} className="flex-shrink-0" style={{ color: data.device ? '#FF9933' : '#ccc' }} />
         {data.device

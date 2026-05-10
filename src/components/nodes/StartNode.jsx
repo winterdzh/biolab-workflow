@@ -4,8 +4,13 @@ const C = '#FF9933'
 export default function StartNode({ data, selected }) {
   return (
     <div
-      className={`flex items-center justify-center w-20 h-20 border-2 shadow-sm transition-all ${selected ? 'ring-2 ring-green-200' : ''}`}
-      style={{ borderColor: C, backgroundColor: selected ? '#e07000' : '#fff3e0', borderRadius: 4 }}
+      className={`flex items-center justify-center w-20 h-20 transition-all ${selected ? 'ring-2 ring-green-200' : ''}`}
+      style={{
+        border: 'none',
+        backgroundColor: selected ? 'rgba(255,235,205,0.98)' : 'rgba(255,245,230,0.95)',
+        borderRadius: 18,
+        boxShadow: selected ? '0 0 0 3px rgba(255,153,51,0.25), 0 6px 22px rgba(255,153,51,0.24)' : '0 4px 16px rgba(255,153,51,0.2), 0 1px 4px rgba(0,0,0,0.08)',
+      }}
     >
       <Handle type="source" position={Position.Right} id="flow-out" className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: C }} />
       <div className="text-center pointer-events-none">

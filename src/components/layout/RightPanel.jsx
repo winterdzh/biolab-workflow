@@ -873,8 +873,8 @@ export default function RightPanel({ width = 240 }) {
 
   if (!selectedNode && !selectedEdge) {
     return (
-      <div className="bg-gray-50 border-l border-gray-200 flex items-center justify-center flex-shrink-0" style={{ width }}>
-        <div className="text-center text-gray-300 p-6">
+      <div className="apple-glass flex items-center justify-center flex-shrink-0" style={{ width, boxShadow: 'inset 1px 0 0 rgba(255,255,255,0.65)' }}>
+        <div className="text-center text-gray-400 p-6">
           <div className="text-3xl mb-2">✦</div>
           <div className="text-xs">Click a node or connection to edit</div>
         </div>
@@ -887,14 +887,14 @@ export default function RightPanel({ width = 240 }) {
     : selectedNode?.type?.replace('Node', '') + ' node'
 
   return (
-    <div className="bg-white border-l border-gray-200 flex flex-col flex-shrink-0" style={{ width }}>
-      <div className="p-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
-        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Properties</div>
-        <div className="text-xs text-gray-400 mt-0.5 capitalize">
+    <div className="apple-glass flex flex-col flex-shrink-0" style={{ width, boxShadow: 'inset 1px 0 0 rgba(255,255,255,0.65)' }}>
+      <div className="p-3 flex-shrink-0" style={{ boxShadow: 'inset 0 -1px 0 rgba(0,0,0,0.06)' }}>
+        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Properties</div>
+        <div className="text-xs text-gray-500 mt-0.5 capitalize">
           {selectedNode ? typeLabel : 'Connection'}
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto min-h-0">
+      <div className="flex-1 overflow-y-auto min-h-0 apple-scroll">
       {selectedNode && (
         <NodeProps
           node={selectedNode}

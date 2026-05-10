@@ -13,12 +13,12 @@ export default function DataNode({ data, selected }) {
   return (
     <div
       className={`bg-white border shadow-sm w-48 transition-all ${selected ? 'ring-2 ring-teal-100' : ''}`}
-      style={{ borderColor: selected ? C : '#80CBC4', borderRadius: 4 }}
+      style={{ borderColor: selected ? 'rgba(0,150,136,0.35)' : 'rgba(0,0,0,0.06)', borderRadius: 14, background: 'rgba(255,255,255,0.9)', boxShadow: selected ? '0 0 0 3px rgba(0,150,136,0.18), 0 4px 20px rgba(0,150,136,0.14)' : '0 4px 20px rgba(0,0,0,0.08)' }}
     >
 
 
       {/* Header */}
-      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: '#E0F2F1', borderColor: '#B2DFDB' }}>
+      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)' }}>
         <Database size={13} style={{ color: C, flexShrink: 0 }} />
         <span className="font-semibold text-gray-800 text-sm leading-tight truncate flex-1">{data.label}</span>
         {outputs.length > 0 && (

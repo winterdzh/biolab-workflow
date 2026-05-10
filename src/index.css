@@ -6,5 +6,61 @@ html, body, #root {
 }
 
 *, *::before, *::after {
-  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root {
+  --brand-red: #cc0000;
+  --ui-bg: #f5f5f7;
+  --ui-panel: rgba(242, 242, 247, 0.88);
+  --ui-panel-soft: rgba(255, 255, 255, 0.78);
+  --ui-border-soft: rgba(0, 0, 0, 0.06);
+  --ui-text-primary: #1c1c1e;
+  --ui-text-secondary: #6e6e73;
+  --ui-text-muted: #8e8e93;
+  --ui-radius-sm: 10px;
+  --ui-radius-md: 14px;
+  --ui-radius-lg: 18px;
+  --ui-shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --ui-shadow-strong: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+body {
+  background: radial-gradient(circle at 12% -10%, rgba(204, 0, 0, 0.06), transparent 42%),
+              radial-gradient(circle at 88% 0%, rgba(255, 255, 255, 0.9), transparent 35%),
+              var(--ui-bg);
+  color: var(--ui-text-primary);
+}
+
+.apple-glass {
+  background: var(--ui-panel);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.apple-card {
+  border-radius: var(--ui-radius-md);
+  background: var(--ui-panel-soft);
+  box-shadow: var(--ui-shadow-soft);
+}
+
+.apple-input {
+  border: none;
+  border-radius: var(--ui-radius-sm);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.apple-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.apple-scroll::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 128, 0.35);
+  border-radius: 99px;
+}
+
+.apple-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }

@@ -9,15 +9,15 @@ export default function ReagentNode({ data, selected }) {
   return (
     <div
       className={`bg-white border shadow-sm w-44 transition-all ${selected ? 'ring-2 ring-violet-100' : ''}`}
-      style={{ borderColor: selected ? C : '#c4b5fd', borderRadius: 4 }}
+      style={{ borderColor: selected ? 'rgba(139,92,246,0.35)' : 'rgba(0,0,0,0.06)', borderRadius: 14, background: 'rgba(255,255,255,0.9)', boxShadow: selected ? '0 0 0 3px rgba(139,92,246,0.2), 0 4px 20px rgba(139,92,246,0.15)' : '0 4px 20px rgba(0,0,0,0.08)' }}
     >
-      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: '#f5f3ff', borderColor: '#ddd6fe' }}>
+      <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)' }}>
         <Droplets size={13} style={{ color: C, flexShrink: 0 }} />
         <span className="font-semibold text-gray-800 text-sm leading-tight truncate flex-1">{data.label}</span>
         {items.length > 0 && (
           <span
             className="text-xs px-1.5 py-0.5 flex-shrink-0"
-            style={{ backgroundColor: '#ede9fe', color: C, borderRadius: 3 }}
+            style={{ backgroundColor: '#ede9fe', color: C, borderRadius: 8 }}
           >
             {items.length}
           </span>
