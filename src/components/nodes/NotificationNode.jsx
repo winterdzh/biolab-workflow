@@ -24,7 +24,7 @@ export default function NotificationNode({ data, selected }) {
         '--tw-ring-color': style.color + '33',
       }}
     >
-      <Handle type="target" position={Position.Left} id="flow-in" className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: style.color }} />
+      <Handle type="target" position={Position.Left} id="flow-in" className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: '#64748b' }} />
 
       <div className="px-3 py-2 flex items-center gap-2 border-b" style={{ backgroundColor: 'rgba(255,255,255,0.6)', borderColor: 'rgba(0,0,0,0.05)' }}>
         <Icon size={13} style={{ color: style.color, flexShrink: 0 }} />
@@ -37,7 +37,7 @@ export default function NotificationNode({ data, selected }) {
         </div>
       )}
 
-      <Handle type="source" position={Position.Right} className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: style.color }} />
+      <Handle type="source" position={Position.Right} className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: '#64748b' }} />
     </div>
   )
 }

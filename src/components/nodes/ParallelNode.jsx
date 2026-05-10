@@ -40,7 +40,7 @@ export default function ParallelNode({ data, selected }) {
         position={Position.Left}
         style={{
           top: '50%', left: -6, transform: 'translateY(-50%)',
-          backgroundColor: C, width: 12, height: 12, border: '2px solid white',
+          backgroundColor: '#64748b', width: 12, height: 12, border: '2px solid white',
         }}
       />
 
@@ -83,7 +83,7 @@ export default function ParallelNode({ data, selected }) {
             top,
             right: -6,
             transform: 'translateY(-50%)',
-            backgroundColor: C,
+            backgroundColor: '#64748b',
             width: 12,
             height: 12,
             border: '2px solid white',

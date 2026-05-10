@@ -14,7 +14,7 @@ export default function StartNode({ data, selected }) {
         boxShadow: selected ? '0 0 0 3px rgba(255,153,51,0.25), 0 6px 22px rgba(255,153,51,0.24)' : '0 4px 16px rgba(255,153,51,0.2), 0 1px 4px rgba(0,0,0,0.08)',
       }}
     >
-      <Handle type="source" position={Position.Right} id="flow-out" className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: C }} />
+      <Handle type="source" position={Position.Right} id="flow-out" className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: '#64748b' }} />
       <div className="text-center pointer-events-none">
         <Play size={16} strokeWidth={2.5} style={{ color: C, margin: '0 auto 3px' }} />
         <div className="font-semibold text-[11px] tracking-[-0.01em]" style={{ color: '#b35900' }}>{data.label}</div>

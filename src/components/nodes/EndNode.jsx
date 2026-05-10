@@ -14,7 +14,7 @@ export default function EndNode({ data, selected }) {
         boxShadow: selected ? '0 0 0 3px rgba(204,0,0,0.2), 0 6px 22px rgba(204,0,0,0.2)' : '0 4px 16px rgba(204,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08)',
       }}
     >
-      <Handle type="target" position={Position.Left} id="flow-in" className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: C }} />
+      <Handle type="target" position={Position.Left} id="flow-in" className="!w-4 !h-4 !border-2 !border-white" style={{ backgroundColor: '#64748b' }} />
       <div className="text-center pointer-events-none">
         <Square size={16} strokeWidth={2} fill={C} style={{ color: C, margin: '0 auto 3px' }} />
         <div className="font-semibold text-[11px] tracking-[-0.01em]" style={{ color: '#b35900' }}>{data.label}</div>

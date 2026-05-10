@@ -82,13 +82,13 @@ export default function OperationNode({ data, selected }) {
         id="flow-in"
         type="target"
         position={Position.Left}
-        style={{ top: 18, backgroundColor: C, width: 14, height: 14, border: '2px solid white' }}
+        style={{ top: 18, backgroundColor: '#64748b', width: 14, height: 14, border: '2px solid white' }}
       />
       <Handle
         id="flow-out"
         type="source"
         position={Position.Right}
-        style={{ top: 18, backgroundColor: C, width: 14, height: 14, border: '2px solid white' }}
+        style={{ top: 18, backgroundColor: '#64748b', width: 14, height: 14, border: '2px solid white' }}
       />
 
       {/* ── Header ── */}
