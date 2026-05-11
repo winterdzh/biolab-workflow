@@ -221,12 +221,19 @@ function EdgeProps({ edge, updateEdge, onDelete }) {
   )
 }
 
-export default function RightPanel({ width = 240 }) {
+export default function RightPanel({ width = 240, collapsed = false }) {
   const { selectedNodeId, selectedEdgeId } = useUiStore()
   const { nodes, edges, updateNodeData, updateEdgeData, deleteNode, deleteEdge, copyNode, ungroupExperimentNode } = useWorkflowStore()
   const { clearSelection } = useUiStore()
   const selectedNode = nodes.find((n) => n.id === selectedNodeId)
   const selectedEdge = edges.find((e) => e.id === selectedEdgeId)
+
+  const panelStyle = {
+    width,
+    overflow: 'hidden',
+    transition: 'width 180ms ease',
+    boxShadow: collapsed ? 'none' : 'inset 1px 0 0 rgba(255,255,255,0.65)',
+  }
 
   const handleDeleteNode = () => { deleteNode(selectedNodeId); clearSelection() }
   const handleDeleteEdge = () => { deleteEdge(selectedEdgeId); clearSelection() }
@@ -234,7 +241,7 @@ export default function RightPanel({ width = 240 }) {
 
   if (!selectedNode && !selectedEdge) {
     return (
-      <div className="apple-glass flex items-center justify-center flex-shrink-0" style={{ width, boxShadow: 'inset 1px 0 0 rgba(255,255,255,0.65)' }}>
+      <div className="apple-glass flex items-center justify-center flex-shrink-0" style={panelStyle}>
         <div className="text-center text-gray-400 p-6">
           <div className="text-3xl mb-2">✦</div>
           <div className="text-xs">Click a node or connection to edit</div>
@@ -248,7 +255,7 @@ export default function RightPanel({ width = 240 }) {
     : selectedNode?.type?.replace('Node', '') + ' node'
 
   return (
-    <div className="apple-glass flex flex-col flex-shrink-0" style={{ width, boxShadow: 'inset 1px 0 0 rgba(255,255,255,0.65)' }}>
+    <div className="apple-glass flex flex-col flex-shrink-0" style={panelStyle}>
       <div className="p-3 flex-shrink-0" style={{ boxShadow: 'inset 0 -1px 0 rgba(0,0,0,0.06)' }}>
         <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Properties</div>
         <div className="text-xs text-gray-500 mt-0.5 capitalize">

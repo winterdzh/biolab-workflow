@@ -96,13 +96,21 @@ const LIBRARY_TABS = [
   { key: 'devices',  label: 'Devices' },
 ]
 
-export default function LeftPanel({ width = 240 }) {
+export default function LeftPanel({ width = 240, collapsed = false }) {
   const [showLibrary, setShowLibrary] = useState(false)
   const store = useLibraryStore()
 
   return (
     <>
-      <div className="apple-glass flex flex-col flex-shrink-0" style={{ width, boxShadow: 'inset -1px 0 0 rgba(255,255,255,0.65)' }}>
+      <div
+        className="apple-glass flex flex-col flex-shrink-0"
+        style={{
+          width,
+          overflow: 'hidden',
+          transition: 'width 180ms ease',
+          boxShadow: collapsed ? 'none' : 'inset -1px 0 0 rgba(255,255,255,0.65)',
+        }}
+      >
         <div className="flex-1 overflow-y-auto min-h-0 apple-scroll">
 
         {/* Elements - grouped by category */}
