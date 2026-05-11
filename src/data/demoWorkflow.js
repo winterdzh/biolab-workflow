@@ -49,7 +49,7 @@ const objectNodes = [
     position: z,
     data: {
       label: 'Cherry Pick File',
-      files: [{ id: 'cpf1', name: 'CherryPick_384.csv' }],
+      items: [{ id: 'cpf1', name: 'CherryPick_384.csv' }],
       kvPairs: [{ id: 'cpk1', key: 'format', value: '384-well' }],
     },
   },
@@ -57,13 +57,13 @@ const objectNodes = [
     id: 'obj-sirna-source',
     type: 'sampleNode',
     position: z,
-    data: { label: 'siRNA Source Plate', containerType: 'well_384' },
+    data: { label: 'siRNA Source Plate', items: [{ id: 'sirna-src', name: 'siRNA Source Plate', containerType: 'well_384' }] },
   },
   {
     id: 'obj-cells',
     type: 'sampleNode',
     position: z,
-    data: { label: 'Cell Suspension', containerType: 'reservoir' },
+    data: { label: 'Cell Suspension', items: [{ id: 'cells', name: 'Cell Suspension', containerType: 'reservoir' }] },
   },
   {
     id: 'obj-transfection-reag',
@@ -236,11 +236,11 @@ const edges = [
   flow('f-read-end', 'envision-read', 'end-demo'),
 
   itm('e-cp-file', 'obj-cherry-pick-file', 'cpf1', 'echo-cherry-pick', 'cp-file', 'info', 'CherryPick_384.csv'),
-  obj('e-sirna-src', 'obj-sirna-source', 'echo-cherry-pick', 'sirna-src', 'sample', 'siRNA Source Plate'),
+  itm('e-sirna-src', 'obj-sirna-source', 'sirna-src', 'echo-cherry-pick', 'sirna-src', 'sample', 'siRNA Source Plate'),
   itm('e-plate-echo', 'obj-consumables', 'co1', 'echo-cherry-pick', 'echo-plate', 'labware', '384-well Assay Plate'),
 
   mat('m-echo-seed', 'echo-cherry-pick', 'fluent-seeding', 'sirna-picked-plate', 'seed-in', 'sample', 'siRNA Picked 384 Plate'),
-  obj('e-cells-seed', 'obj-cells', 'fluent-seeding', 'cells', 'sample', 'Cell Suspension'),
+  itm('e-cells-seed', 'obj-cells', 'cells', 'fluent-seeding', 'cells', 'sample', 'Cell Suspension'),
   itm('e-tr1-seed', 'obj-transfection-reag', 'tr1', 'fluent-seeding', 'tr1', 'reagent', 'Transfection Reagent'),
   itm('e-tr2-seed', 'obj-transfection-reag', 'tr2', 'fluent-seeding', 'tr2', 'reagent', 'Opti-MEM'),
   itm('e-cr1-seed', 'obj-culture-reag', 'cr1', 'fluent-seeding', 'cr1', 'reagent', 'Complete Medium'),

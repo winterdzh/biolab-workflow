@@ -34,9 +34,9 @@ const objectNodes = [
 
   // ── Assay Design inputs ────────────────────────────────────────────────────
   { id: 'obj-plate-map',   type: 'dataNode',    position: z,
-    data: { label: 'Plate Map' } },
+    data: { label: 'Plate Map', items: [{ id: 'plate-map', name: 'Plate Map' }] } },
   { id: 'obj-oligo-seq',   type: 'dataNode',    position: z,
-    data: { label: 'Oligo Sequences' } },
+    data: { label: 'Oligo Sequences', items: [{ id: 'oligo-seq', name: 'Oligo Sequences' }] } },
 
   // ── Oligo Synthesis ────────────────────────────────────────────────────────
   { id: 'obj-synth-board', type: 'labwareNode', position: z,
@@ -100,7 +100,7 @@ const objectNodes = [
 
   // ── Aliquot randomization ──────────────────────────────────────────────────
   { id: 'obj-rand-seeds',  type: 'dataNode',    position: z,
-    data: { label: 'Random Seeds / Layout' } },
+    data: { label: 'Random Seeds / Layout', items: [{ id: 'rand-seeds', name: 'Random Seeds / Layout' }] } },
   { id: 'obj-assay-plt',   type: 'labwareNode', position: z,
     data: { label: 'Cell Culture Plates (96 or 384-well)',
             items: [{ id: 'ap1', name: 'Cell Culture Plates' }] } },
@@ -238,8 +238,8 @@ const edges = [
   flow('f-so-end', 'store-oligos',          'end-oligo'),
 
   // ── assay-design inputs ────────────────────────────────────────────────────
-  obj('oe-ad-pm',  'obj-plate-map', 'assay-design', 'ad-pm', 'info', 'Plate Map'),
-  obj('oe-ad-os',  'obj-oligo-seq', 'assay-design', 'ad-os', 'info', 'Oligo Sequences'),
+  itm('oe-ad-pm',  'obj-plate-map', 'plate-map', 'assay-design', 'ad-pm', 'info', 'Plate Map'),
+  itm('oe-ad-os',  'obj-oligo-seq', 'oligo-seq', 'assay-design', 'ad-os', 'info', 'Oligo Sequences'),
 
   // ── oligo-synth inputs ─────────────────────────────────────────────────────
   mat('m-ad-os',   'assay-design',   'oligo-synth', 'matrix',     'os-mx',  'info',    'Designed Matrix'),
@@ -295,7 +295,7 @@ const edges = [
 
   // ── aliquot-random inputs ──────────────────────────────────────────────────
   mat('m-xa-ar',   'sample-xfer-aliquot', 'aliquot-random', 'idots-loaded', 'ar-id', 'sample', 'I.Dot S Source Plates (loaded)'),
-  obj('oe-ar-rs',  'obj-rand-seeds', 'aliquot-random', 'ar-rs',   'info',    'Random Seeds / Layout'),
+  itm('oe-ar-rs',  'obj-rand-seeds', 'rand-seeds', 'aliquot-random', 'ar-rs',   'info',    'Random Seeds / Layout'),
   itm('oe-ar-ap1', 'obj-assay-plt',  'ap1', 'aliquot-random', 'ar-ap1', 'labware', 'Cell Culture Plates'),
 
   // ── seal → store-oligos ────────────────────────────────────────────────────

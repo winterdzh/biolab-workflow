@@ -36,11 +36,11 @@ const objectNodes = [
 
   // ── Cross-workflow input: sealed oligo plates from synthesis workflow ───────
   { id: 'obj-stored-oligos', type: 'sampleNode', position: z,
-    data: { label: 'Sealed Oligo Plates (from Synthesis)', containerType: '384_well_plate' } },
+    data: { label: 'Sealed Oligo Plates (from Synthesis)', items: [{ id: 'stored-oligos', name: 'Sealed Oligo Plates', containerType: '384_well_plate' }] } },
 
   // ── Cell revival ────────────────────────────────────────────────────────────
   { id: 'obj-cryo-cells',  type: 'sampleNode',  position: z,
-    data: { label: 'Cryopreserved Cells', containerType: 'cryo_tube' } },
+    data: { label: 'Cryopreserved Cells', items: [{ id: 'cryo-cells', name: 'Cryopreserved Cells', containerType: 'cryo_tube' }] } },
   { id: 'obj-thaw-reag',   type: 'reagentNode', position: z,
     data: { label: 'Thaw Reagents',
             items: [{ id: 'th1', name: 'Cell Culture Medium' }, { id: 'th2', name: 'Liquid Nitrogen' }] } },
@@ -289,7 +289,7 @@ const edges = [
   flow('f-ci-end', 'cell-imaging-assay',  'end-workflow'),
 
   // ── peel inputs ────────────────────────────────────────────────────────────
-  obj('oe-pl-so',  'obj-stored-oligos', 'peel', 'pl-so', 'sample', 'Sealed Oligo Plates'),
+  itm('oe-pl-so',  'obj-stored-oligos', 'stored-oligos', 'peel', 'pl-so', 'sample', 'Sealed Oligo Plates'),
 
   // ── transfect-prep inputs ──────────────────────────────────────────────────
   mat('m-pl-tp',   'peel',            'transfect-prep', 'peeled-oligos', 'tp-ol', 'sample',  'Oligos in 384-well Plate'),
@@ -298,7 +298,7 @@ const edges = [
   itm('oe-tp-tc1', 'obj-trans-cons',  'tco1', 'transfect-prep', 'tp-tc1', 'labware', 'Reservoir'),
 
   // ── thaw-cell inputs ───────────────────────────────────────────────────────
-  obj('oe-tc-cc',  'obj-cryo-cells',   'thaw-cell', 'tc-cc',  'sample',  'Cryopreserved Cells'),
+  itm('oe-tc-cc',  'obj-cryo-cells',   'cryo-cells', 'thaw-cell', 'tc-cc',  'sample',  'Cryopreserved Cells'),
   itm('oe-tc-th1', 'obj-thaw-reag',    'th1', 'thaw-cell', 'tc-th1', 'reagent', 'Cell Culture Medium'),
   itm('oe-tc-th2', 'obj-thaw-reag',    'th2', 'thaw-cell', 'tc-th2', 'reagent', 'Liquid Nitrogen'),
   itm('oe-tc-ct1', 'obj-cryo-tube-t',  'ct1', 'thaw-cell', 'tc-ct1', 'labware', 'Cryo Tubes'),
