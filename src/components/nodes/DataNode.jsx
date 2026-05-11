@@ -1,10 +1,14 @@
-import { Handle, Position } from '@xyflow/react'
+import { Handle, Position, useUpdateNodeInternals } from '@xyflow/react'
 import { Database } from 'lucide-react'
+import { useEffect } from 'react'
 
 const C = '#009688'
 
-export default function DataNode({ data, selected }) {
+export default function DataNode({ id, data, selected }) {
+  const updateNodeInternals = useUpdateNodeInternals()
   const items = data.items ?? data.files ?? data.outputs ?? []
+
+  useEffect(() => { updateNodeInternals(id) }, [id, items.length, updateNodeInternals])
 
   return (
     <div

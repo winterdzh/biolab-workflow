@@ -65,12 +65,20 @@ export default function WorkflowCanvas({ readOnly = false }) {
       const srcIsPort = sourceHandle?.startsWith('out-') || sourceHandle === 'mat-out'
       const tgtIsPort = targetHandle?.startsWith('in-') || targetHandle === 'new-input' || targetHandle === 'mat-in'
       // Material/data connections: both sides must be port/mat handles
-      if (srcIsPort || tgtIsPort) return srcIsPort && tgtIsPort
+      if (srcIsPort || tgtIsPort) {
+        if (!(srcIsPort && tgtIsPort)) return false
+        // Each item handle (out-<id>) on an object node can only have one outgoing edge
+        if (sourceHandle?.startsWith('out-') && OBJECT_NODE_TYPES.has(srcNode?.type)) {
+          const alreadyConnected = edges.some((e) => e.source === source && e.sourceHandle === sourceHandle)
+          if (alreadyConnected) return false
+        }
+        return true
+      }
       // Workflow flow connections: neither side may be an object node
       if (OBJECT_NODE_TYPES.has(srcNode?.type) || OBJECT_NODE_TYPES.has(tgtNode?.type)) return false
       return true
     },
-    [nodes],
+    [nodes, edges],
   )
 
   // ── node type → port type (for objects nodes) ─────────────────────────────
@@ -99,7 +107,8 @@ export default function WorkflowCanvas({ readOnly = false }) {
           const itemId = sourceHandle.slice(4)
           let item
           if (srcNode.type === 'dataNode') {
-            item = srcNode.data?.files?.find((o) => o.id === itemId)
+            item = srcNode.data?.items?.find((o) => o.id === itemId)
+              ?? srcNode.data?.files?.find((o) => o.id === itemId)
               ?? srcNode.data?.outputs?.find((o) => o.id === itemId)
           } else {
             item = srcNode.data?.items?.find((it) => it.id === itemId)

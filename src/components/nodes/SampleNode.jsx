@@ -1,10 +1,14 @@
-import { Handle, Position } from '@xyflow/react'
+import { Handle, Position, useUpdateNodeInternals } from '@xyflow/react'
 import { FlaskConical } from 'lucide-react'
+import { useEffect } from 'react'
 
 const C = '#3b82f6'
 
-export default function SampleNode({ data, selected }) {
+export default function SampleNode({ id, data, selected }) {
+  const updateNodeInternals = useUpdateNodeInternals()
   const items = data.items ?? []
+
+  useEffect(() => { updateNodeInternals(id) }, [id, items.length, updateNodeInternals])
 
   return (
     <div
