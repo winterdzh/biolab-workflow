@@ -129,21 +129,32 @@ Same as reagentNode — each item has `out-{itemId}`.
 
 ### 2d. From `dataNode` → `operationNode`
 
-Preferred: if `dataNode` has files in `data.files`, use `out-{fileId}`:
+**Preferred approach (new in 2026):** if `dataNode` uses `data.files` array, reference each file via `out-{fileId}`:
 ```json
 {
+  "id": "e-map-to-seed",
+  "type": "labwareEdge",
+  "source": "obj-plate-map",
+  "target": "op-cell-seeding",
   "sourceHandle": "out-f1",
+  "targetHandle": "in-design",
   "data": {"portType": "info", "portLabel": "Plate Map.csv"}
 }
 ```
 
-Compatibility fallback (legacy workflows): if `dataNode` has no file entries, use `mat-out`:
+**Why use `data.files`?**
+- Each file generates its own output port in the canvas (independent routing).
+- Cleaner visual separation when a workflow receives multiple data files.
+- Example: one workflow receives cherry-pick instructions (f1), assay parameters (f2), and sample list (f3) — each routes to different downstream operations.
+
+**Backward compatibility:** Legacy workflows may use `mat-out` if `dataNode` has no `data.files` entries:
 ```json
 {
   "sourceHandle": "mat-out",
   "data": {"portType": "info", "portLabel": "Plate Map"}
 }
 ```
+Both models work; the tool bridges them automatically during edge resolution. **For new workflows, always use `data.files`.**
 
 ### 2e. From `operationNode` (output port) → `operationNode` (input port)
 

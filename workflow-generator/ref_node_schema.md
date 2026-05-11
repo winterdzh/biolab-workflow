@@ -303,8 +303,9 @@ Consumables: plates, tubes, tips, columns, etc.
 ---
 
 ### `dataNode`
-Digital data files: plate maps, sequence lists, design files, reports.
+Digital data files: plate maps, sequence lists, design files, reports, cherry-pick instructions.
 
+**Preferred model (new in 2026):**
 ```json
 {
   "id": "obj-plate-map",
@@ -322,9 +323,23 @@ Digital data files: plate maps, sequence lists, design files, reports.
 }
 ```
 
-- Preferred model: each file in `data.files` gets its own output handle `out-{fileId}`.
-- Backward compatibility: legacy workflows may still use `data.outputs`; new workflows should use `data.files`.
-- `outputs` array can be populated for named outputs (same structure as operationNode outputs)
+**How it works:**
+- Each file in `data.files` array generates exactly one output handle in the canvas: `out-{fileId}`
+- Connect to downstream operations using edges with `sourceHandle: "out-f1"` and `data.portType: "info"`
+- Each file can be routed independently to different operations
+
+**Backward compatibility:**
+- Legacy workflows may use `data.outputs` array instead of `data.files`. Both models work, but `data.files` is recommended.
+- The tool's runtime automatically bridges between both models during edge routing.
+
+**Field reference:**
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `label` | string | ✅ | Display name |
+| `files` | array of `{id, name}` | ✅ | List of data files. Each generates one output port. |
+| `kvPairs` | array of `{id, key, value}` | — | Optional metadata (key-value pairs) |
+| `outputs` | array | — | Legacy field; use only if needed for backward compatibility |
 
 ---
 

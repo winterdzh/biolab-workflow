@@ -13,8 +13,15 @@ These files should be in the same folder as this skill or provided by the user:
 | `ref_edge_schema.md` | Edge types, handle naming rules, portType enum |
 | `ref_example_minimal.json` | A working minimal workflow example (few-shot reference) |
 | `../src/data/defaultLibraries/devices.json` | Available device catalog (id + name for device fields) |
+| `../src/data/demoWorkflow.js` | Real-world example: siRNA→Echo→Fluent→Cytation→Cytomat→HTRF pipeline |
 
 > **If running locally:** Ask the user to provide the path to these files, e.g. `./workflow-generator/ref_node_schema.md`.
+
+## Import & Storage Facts
+- **Target format:** Complete workflow JSON (string) that will be imported into the biolab-workflow tool.
+- **Storage:** Workflows are persisted to browser localStorage under key `biolab.appState.v1`. No server upload needed.
+- **Sanitization:** On import, the tool automatically filters out confidential workflow patterns. You do NOT need to worry about data privacy; the tool handles it.
+- **Maximum workflow count:** Browsers typically support up to 50–100 workflows in localStorage depending on browser/device. Each workflow JSON should be kept under 1MB for optimal performance.
 
 ---
 
@@ -50,6 +57,11 @@ For every physical input to any operation, create a corresponding Object node:
 - Buffer, solution, enzyme, reagent → **`reagentNode`** (group related reagents into one node; each reagent is an item)
 - Plate, tube, tip box, column, consumable → **`labwareNode`** (group related labware into one node)
 - Data file, plate map, sequence list, report → **`dataNode`** with `data.files` entries (one file = one output handle)
+
+**DataNode semantics (2026 update):**
+- Prefer `data.files` array for all new workflows. Each file is `{id, name}` and generates exactly one output handle `out-{fileId}`.
+- Backward compatibility: legacy workflows may still have `data.outputs`; both models work, but `data.files` is the recommended approach.
+- Each file in `data.files` appears as a separate output port in the canvas, allowing fine-grained edge routing.
 
 ### 2.3 Identify outputs of each operation
 For each operation, list what it produces:
@@ -127,8 +139,23 @@ Use the rules below and the reference files to construct the workflow JSON.
 
 ### 4.4 Output format
 
-Wrap the JSON in a markdown code block:
+Wrap the JSON in a markdown code block. The tool accepts both **minimal format** (nodes + edges only) and **full format** (with metadata, viewport, library):
 
+**Minimal format (recommended for import):**
+```json
+{
+  "version": "1.0",
+  "metadata": {
+    "name": "...",
+    "createdAt": "<ISO timestamp>",
+    "modifiedAt": "<ISO timestamp>"
+  },
+  "nodes": [ ... ],
+  "edges": [ ... ]
+}
+```
+
+**Full format (can include viewport and library snapshot):**
 ```json
 {
   "version": "1.0",
@@ -145,6 +172,17 @@ Wrap the JSON in a markdown code block:
 }
 ```
 
+**Timestamp format:** `"2026-05-11T14:30:00.000Z"` (ISO 8601 with milliseconds, UTC)
+
+When pasting JSON into the biolab-workflow tool:
+1. Copy the entire JSON (minimal or full)
+2. Go to Cover Page → drag and drop the JSON string or use "Import Workflow JSON"
+3. The tool automatically:
+   - Sanitizes workflow names (filters confidential patterns)
+   - Resolves device IDs against the devices library
+   - Applies auto-layout if no viewport is provided
+   - Persists to localStorage
+
 ---
 
 ## PHASE 5 — Validation Checklist
@@ -156,13 +194,28 @@ Before delivering the final JSON, verify:
 - [ ] No Object node (`sampleNode`, `reagentNode`, `labwareNode`, `dataNode`) has a `workflowEdge` connected to it
 - [ ] Every `operationNode` that produces an output used downstream has a matching edge with `sourceHandle: "out-{outputId}"`
 - [ ] Reagent/labware items referenced in edges (`out-{itemId}`) actually exist in the Object node's `items` array
-- [ ] DataNode file handles referenced in edges (`out-{fileId}`) actually exist in the DataNode `files` array
+- [ ] DataNode file handles referenced in edges (`out-{fileId}`) actually exist in the DataNode `files` array (for new workflows)
 - [ ] There is exactly one `startNode` per independent flow (two starts are OK if two parallel workflows are shown)
 - [ ] All `ifElseNode` nodes have both `"true"` and `"false"` outgoing workflow edges
 - [ ] No duplicate node IDs or edge IDs
 - [ ] `duration` is always `{"value": "...", "unit": "..."}` — never a plain string
+- [ ] All `device` fields either use `null` (manual operation) or `{id, name}` with valid device ID from `devices.json`
+- [ ] Timestamps in metadata are ISO 8601 format: `"2026-05-11T14:30:00.000Z"`
 
-If any check fails, fix the JSON before outputting.
+If any check fails, fix the JSON and re-validate before outputting.
+
+---
+
+## Pre-Upload Checklist
+
+Once JSON is generated and validated, before sharing with the user for import:
+
+✅ **Readability:** Can the user understand the workflow structure by reading the node labels?  
+✅ **Completeness:** Are all starting materials (samples, reagents, labware, data) represented as Object nodes?  
+✅ **Routing:** Do all material flows make logical sense? (e.g. cells → centrifuge → pellet-to-next-step)  
+✅ **Devices:** Are device names recognizable and reasonable? (e.g. "Liquid Handler", "Centrifuge", not "Machine A")  
+✅ **Timeframes:** Are all durations plausible? (e.g. not "1 sec" for a 2-hour incubation)  
+✅ **Size:** Is the final JSON under 1MB? (for localStorage compatibility)
 
 ---
 
