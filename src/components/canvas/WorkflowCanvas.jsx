@@ -67,8 +67,9 @@ export default function WorkflowCanvas({ readOnly = false }) {
       // Material/data connections: both sides must be port/mat handles
       if (srcIsPort || tgtIsPort) {
         if (!(srcIsPort && tgtIsPort)) return false
-        // Each item handle (out-<id>) on an object node can only have one outgoing edge
-        if (sourceHandle?.startsWith('out-') && OBJECT_NODE_TYPES.has(srcNode?.type)) {
+        // Sample / Reagent / Labware item handles: one outgoing edge only (no reuse)
+        // Data node items are reusable and may connect to multiple targets
+        if (sourceHandle?.startsWith('out-') && OBJECT_NODE_TYPES.has(srcNode?.type) && srcNode?.type !== 'dataNode') {
           const alreadyConnected = edges.some((e) => e.source === source && e.sourceHandle === sourceHandle)
           if (alreadyConnected) return false
         }
