@@ -183,6 +183,8 @@ export default function CoverPage({ isMobile = false }) {
   const [showGlobalVars, setShowGlobalVars] = useState(false)
   const [showNewModal, setShowNewModal] = useState(false)
   const [search, setSearch] = useState('')
+  const [pageDragOver, setPageDragOver] = useState(false)
+  const dragCounterRef = useRef(0)
   const needsBackupReminder = appStore.needsBackupReminder()
 
   const filtered = appStore.workflows.filter((w) =>
@@ -238,15 +240,63 @@ export default function CoverPage({ isMobile = false }) {
   const processFile = useCallback((file) => {
     if (!file?.name.endsWith('.json')) { alert('Please select a .json workflow file'); return }
     const reader = new FileReader()
-    reader.onload = (ev) => appStore.importWorkflowJSON(ev.target.result)
+    reader.onload = (ev) => {
+      const txt = ev.target.result
+      try {
+        const data = JSON.parse(txt)
+        // Auto-detect: if it's an Export All bundle (has workflows array), use importAllJSON
+        if (Array.isArray(data.workflows) && !data.nodes) {
+          appStore.importAllJSON(txt, libraryStore)
+        } else {
+          appStore.importWorkflowJSON(txt)
+        }
+      } catch {
+        alert('Invalid JSON file: ' + file.name)
+      }
+    }
     reader.readAsText(file)
-  }, [appStore])
+  }, [appStore, libraryStore])
+
+  // Page-level drag-and-drop: accept files dropped anywhere on the page
+  const onPageDragEnter = useCallback((e) => {
+    if (!e.dataTransfer.types.includes('Files')) return
+    e.preventDefault()
+    dragCounterRef.current++
+    setPageDragOver(true)
+  }, [])
+  const onPageDragLeave = useCallback((e) => {
+    e.preventDefault()
+    dragCounterRef.current = Math.max(0, dragCounterRef.current - 1)
+    if (dragCounterRef.current === 0) setPageDragOver(false)
+  }, [])
+  const onPageDragOver = useCallback((e) => { e.preventDefault() }, [])
+  const onPageDrop = useCallback((e) => {
+    e.preventDefault()
+    dragCounterRef.current = 0
+    setPageDragOver(false)
+    const files = Array.from(e.dataTransfer.files).filter((f) => f.name.endsWith('.json'))
+    if (files.length === 0) { alert('Please drop .json workflow files'); return }
+    files.forEach(processFile)
+  }, [processFile])
 
   return (
     <div
       className="min-h-screen flex flex-col overflow-hidden"
       style={{ background: 'var(--ui-bg)', height: isMobile ? '100dvh' : 'auto' }}
+      onDragEnter={onPageDragEnter}
+      onDragLeave={onPageDragLeave}
+      onDragOver={onPageDragOver}
+      onDrop={onPageDrop}
     >
+      {/* Full-page drop overlay */}
+      {pageDragOver && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center pointer-events-none"
+          style={{ background: 'rgba(204,0,0,0.06)', border: '3px dashed rgba(204,0,0,0.35)' }}>
+          <Upload size={40} style={{ color: '#CC0000', marginBottom: 12 }} />
+          <div className="font-semibold text-base" style={{ color: '#CC0000' }}>Drop JSON to Import</div>
+          <div className="text-sm text-gray-500 mt-1">Single workflow or Export All bundle</div>
+        </div>
+      )}
       {/* Header */}
       <div style={{ background: 'rgba(180,0,0,0.92)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)', boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.15)' }}>
         {isMobile ? (
