@@ -12,6 +12,7 @@ These files should be in the same folder as this skill or provided by the user:
 | `ref_node_schema.md` | All node types, required fields, and data structures |
 | `ref_edge_schema.md` | Edge types, handle naming rules, portType enum |
 | `ref_example_minimal.json` | A working minimal workflow example (few-shot reference) |
+| `ref_import_format.md` | **Import format spec + external recipe conversion guide** (read when converting from non-biolab-workflow JSON) |
 | `../src/data/defaultLibraries/devices.json` | Available device catalog (id + name for device fields) |
 | `../src/data/demoWorkflow.js` | Real-world example: siRNA→Echo→Fluent→Cytation→Cytomat→HTRF pipeline |
 
@@ -23,7 +24,27 @@ These files should be in the same folder as this skill or provided by the user:
 - **Sanitization:** On import, the tool automatically filters out confidential workflow patterns. You do NOT need to worry about data privacy; the tool handles it.
 - **Maximum workflow count:** Browsers typically support up to 50–100 workflows in localStorage depending on browser/device. Each workflow JSON should be kept under 1MB for optimal performance.
 
----
+## ⚠️ Import Format — Required Fields (importWorkflowJSON)
+
+The system's `importWorkflowJSON` function performs a strict check on the JSON structure.  
+**If `data.nodes` or `data.edges` is missing/falsy, the import will fail with "Invalid workflow JSON: Missing nodes/edges".**
+
+The following top-level keys must be present for a successful import:
+
+| Key | Required | Notes |
+|-----|----------|-------|
+| `version` | ✅ | `"1.0"` |
+| `id` | ✅ | A UUID string. Must be generated (e.g. `uuidv4()`). Without it the import still works but you lose deterministic de-duplication. |
+| `metadata` | ✅ | Object with `name`, `createdAt`, `modifiedAt` (ISO 8601), `tags` (array). Extra keys like `source` or `description` are ignored. |
+| `nodes` | ✅ | Non-empty array |
+| `edges` | ✅ | Array (can be empty but must exist) |
+| `workflowVariables` | — | Array of workflow-scoped variables. **Key is `workflowVariables`, NOT `globalVariables`.** |
+| `librarySnapshot` | — | Object, can be empty `{}` |
+
+> **Common mistake:** generating `globalVariables` instead of `workflowVariables`.  
+> `globalVariables` is ignored during single-workflow import; the correct key is `workflowVariables`.
+
+> **Do NOT include:** `viewport` at the top level for single-workflow imports — it is ignored and causes no error, but is cleaner to omit.
 
 ## PHASE 1 — Information Collection
 
@@ -33,10 +54,64 @@ Ask the user to provide the following. Accept partial information and proceed; m
 Please provide:
 1. Workflow name
 2. Protocol description OR attach your SOP / experimental protocol document
+   — OR — an external recipe JSON (e.g. exported from a lab automation platform; see "Source B: External Recipe" below)
 3. (Optional) Are there specific instruments/devices that must be used?
    If yes, list them. If no, generic names like "Liquid Handler", "Centrifuge" are fine.
 4. (Optional) Known samples, reagents, or labware that are starting materials
 ```
+
+### Source A: Natural language / SOP
+Proceed through Phases 2–5 as described below.
+
+### Source B: External Recipe JSON (e.g. Innovel/XL-001 platform)
+
+If the user provides a structured recipe JSON from an external platform (not in biolab-workflow format), follow this conversion pipeline:
+
+#### 1. Identify the source schema
+Common fields in external recipe formats:
+- `stages`: top-level sequential stages (maps to `operationNode` or `waitUntilNode`)
+- `recipeActions`: flat list of low-level actions with `actionCode`, `level`, `actionName`
+- `resourceMaterials` / `actionMaterials`: labware and reagents on deck (maps to `reagentNode` / `labwareNode`)
+- `globalVariables`: runtime variables (maps to `workflowVariables` in output)
+- `sequenceList`: liquid handling sequences (metadata only, not directly converted)
+
+#### 2. Map external concepts → biolab-workflow node types
+
+| External concept | biolab-workflow node type |
+|-----------------|--------------------------|
+| Stage / top-level step group | `operationNode` |
+| `Delay` / timed incubation stage (unattended) | `waitUntilNode` |
+| `forstart` + loop body | `loopNode` |
+| `If` / conditional actionCode | `ifElseNode` |
+| `parallel` combination block | `parallelNode` |
+| `Stage` actionCode (named sub-workflow) | `operationNode` (with nested steps summarized in `description`) |
+| Physical plate / reservoir on deck (`COMBINE`, `PLATE`, `Reservoir`) | `reagentNode` or `labwareNode` depending on content |
+| Biological sample plate | `sampleNode` |
+| External data file / sequence map | `dataNode` |
+
+#### 3. Extraction strategy for large recipes
+
+1. **Read `stages`** array to get the high-level step names and device assignments.
+2. **For each stage**, look up its children in `recipeActions` (filter by `levelPid` or `parentSerialNo`).
+3. **Summarize** each stage as one `operationNode`. Embed low-level detail in `description` and `notes` fields; do not create one node per `recipeAction`.
+4. **Identify start materials** from `resourceMaterials` (nickName + itemCategory). Group by type:
+   - `COMBINE` + `Plate`/`Reservoir` containing reagents → `reagentNode` items
+   - `COMBINE` + `Plate` containing biological samples → `sampleNode`
+   - `LID`, `PLATE`, tip boxes → `labwareNode` items
+5. **Identify QC gates** from `If` actionCode groups that branch to different terminal behaviors.
+6. **Map `globalVariables`** from the source to `workflowVariables` in the output (rename key!).
+
+#### 4. Worked example: Innovel XL-001 recipe → biolab-workflow
+
+Source input keys (Innovel format):
+```
+stages               → 14 top-level stages → 12 operationNodes + 2 waitUntilNodes
+recipeActions        → ~1500 flat actions  → summarized into operationNode.description/notes
+resourceMaterials    → 22 deck materials   → grouped into 6 Object nodes
+globalVariables (78) → 5 key variables     → workflowVariables array in output
+```
+
+Result: 29 nodes, 60 edges — complete importable workflow.
 
 ---
 
@@ -155,22 +230,27 @@ Wrap the JSON in a markdown code block. The tool accepts both **minimal format**
 }
 ```
 
-**Full format (can include viewport and library snapshot):**
+**Full format (can include workflowVariables and library snapshot):**
 ```json
 {
   "version": "1.0",
+  "id": "<UUID>",
   "metadata": {
     "name": "...",
+    "description": "...",
     "createdAt": "<ISO timestamp>",
-    "modifiedAt": "<ISO timestamp>"
+    "modifiedAt": "<ISO timestamp>",
+    "tags": []
   },
   "nodes": [ ... ],
   "edges": [ ... ],
-  "viewport": {"x": 0, "y": 0, "zoom": 0.75},
-  "globalVariables": [],
+  "workflowVariables": [],
   "librarySnapshot": {}
 }
 ```
+
+> ⚠️ Key naming: use `workflowVariables` (NOT `globalVariables`) and `id` at the root.  
+> The system reads `data.workflowVariables` → `wf.variables` on import.
 
 **Timestamp format:** `"2026-05-11T14:30:00.000Z"` (ISO 8601 with milliseconds, UTC)
 
@@ -201,6 +281,9 @@ Before delivering the final JSON, verify:
 - [ ] `duration` is always `{"value": "...", "unit": "..."}` — never a plain string
 - [ ] All `device` fields either use `null` (manual operation) or `{id, name}` with valid device ID from `devices.json`
 - [ ] Timestamps in metadata are ISO 8601 format: `"2026-05-11T14:30:00.000Z"`
+- [ ] Top-level key is `workflowVariables` (not `globalVariables`)
+- [ ] Top-level `id` field is present (UUID string)
+- [ ] `metadata` contains `tags` array (can be empty `[]`)
 
 If any check fails, fix the JSON and re-validate before outputting.
 
