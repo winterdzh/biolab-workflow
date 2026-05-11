@@ -1,10 +1,14 @@
 import { create } from 'zustand'
 import { v4 as uuidv4 } from 'uuid'
 import { DEMO_WORKFLOW } from '../data/demoWorkflow'
+import { OLIGO_WORKFLOW } from '../data/oligoWorkflow'
+import { CELL_WORKFLOW } from '../data/cellWorkflow'
 
 const APP_STATE_STORAGE_KEY = 'biolab.appState.v1'
-const CONFIDENTIAL_NAME_REGEX = /(oligo|cell\s*culture|cell\s*processing|bac[-\s]?expression)/i
+const CONFIDENTIAL_NAME_REGEX = /bac[-\s]?expression/i
 const REMOVED_PLACEHOLDER_NAMES = new Set(['plasmid transfection', 'cell seeding'])
+
+const BUILTIN_WORKFLOWS = [DEMO_WORKFLOW, OLIGO_WORKFLOW, CELL_WORKFLOW]
 
 function normalizeName(name = '') {
   return String(name).trim().toLowerCase()
@@ -17,10 +21,10 @@ function orderWorkflows(workflows = []) {
   return demo ? [demo, ...rest] : rest
 }
 
-function ensureDemoWorkflow(workflows = []) {
-  const demoId = DEMO_WORKFLOW.id
-  if (workflows.some((w) => w.id === demoId)) return workflows
-  return [DEMO_WORKFLOW, ...workflows]
+function ensureBuiltinWorkflows(workflows = []) {
+  const ids = new Set(workflows.map((w) => w.id))
+  const missing = BUILTIN_WORKFLOWS.filter((w) => !ids.has(w.id))
+  return missing.length ? [...missing, ...workflows] : workflows
 }
 
 function sanitizeWorkflows(workflows = []) {
@@ -32,7 +36,7 @@ function sanitizeWorkflows(workflows = []) {
     if (REMOVED_PLACEHOLDER_NAMES.has(normalizedName)) return false
     return !(CONFIDENTIAL_NAME_REGEX.test(name) || CONFIDENTIAL_NAME_REGEX.test(tags))
   })
-  return orderWorkflows(ensureDemoWorkflow(filtered))
+  return orderWorkflows(ensureBuiltinWorkflows(filtered))
 }
 
 function getWorkflowFingerprint(workflows = []) {
@@ -95,7 +99,7 @@ function makeWorkflow(name = 'New Workflow') {
 }
 
 const persisted = loadPersistedAppState()
-const defaultWorkflows = orderWorkflows([DEMO_WORKFLOW])
+const defaultWorkflows = orderWorkflows(BUILTIN_WORKFLOWS)
 const initialWorkflows = (persisted?.workflows?.length ? persisted.workflows : defaultWorkflows)
 const initialGlobalVariables = persisted?.globalVariables ?? [
   { id: 'gv1', name: 'projectName', type: 'string', value: 'My Project', description: 'Project identifier' },
