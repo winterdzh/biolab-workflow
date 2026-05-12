@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { ChevronLeft, Undo2, Redo2, BookOpen, Hash, LayoutGrid, Download, HelpCircle, Eye } from 'lucide-react'
 import useWorkflowStore from '../../stores/workflowStore'
 import useAppStore from '../../stores/appStore'
@@ -33,6 +34,7 @@ export default function TopBar({ workflowId, isMobile = false }) {
   const [showWfVars, setShowWfVars] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [showViewFilter, setShowViewFilter] = useState(false)
+  const viewButtonRef = useRef(null)
 
   useEffect(() => { setName(wf?.name ?? '') }, [wf?.name])
 
@@ -132,13 +134,28 @@ export default function TopBar({ workflowId, isMobile = false }) {
         </button>
         {/* View filter dropdown */}
         <div className="relative">
-          <button onClick={() => setShowViewFilter(v => !v)} className={outline}>
+          <button ref={viewButtonRef} onClick={() => setShowViewFilter(v => !v)} className={outline}>
             <Eye size={14} /> View
           </button>
-          {showViewFilter && (
+          {showViewFilter && viewButtonRef.current && createPortal(
             <>
-              <div className="fixed inset-0 z-40" onClick={() => setShowViewFilter(false)} />
-              <div className="absolute top-full right-0 mt-1.5 border border-black/5 rounded-[12px] shadow-xl z-50 p-2" style={{ width: 210, background: 'rgba(250,250,252,0.92)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)' }}>
+              <div
+                className="fixed inset-0"
+                style={{ zIndex: 70 }}
+                onClick={() => setShowViewFilter(false)}
+              />
+              <div
+                className="fixed border border-black/5 rounded-[12px] shadow-xl p-2"
+                style={{
+                  width: 210,
+                  top: viewButtonRef.current.getBoundingClientRect().bottom + 6,
+                  left: Math.max(8, viewButtonRef.current.getBoundingClientRect().right - 210),
+                  zIndex: 80,
+                  background: 'rgba(250,250,252,0.92)',
+                  backdropFilter: 'blur(28px)',
+                  WebkitBackdropFilter: 'blur(28px)',
+                }}
+              >
                 <div className="flex items-center justify-between mb-1.5 px-1">
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Show Flows</span>
                   <div className="flex gap-2">
@@ -150,8 +167,17 @@ export default function TopBar({ workflowId, isMobile = false }) {
                 {FLOW_FILTERS.map(({ key, label, color }) => {
                   const checked = visibleFlows[key]
                   return (
-                    <label
+                    <div
                       key={key}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => toggleFlow(key)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          toggleFlow(key)
+                        }
+                      }}
                       className="flex items-center gap-2 px-2 py-1.5 cursor-pointer select-none hover:bg-gray-50 transition-colors"
                       style={{ borderRadius: 4 }}
                     >
@@ -165,7 +191,6 @@ export default function TopBar({ workflowId, isMobile = false }) {
                           </svg>
                         )}
                       </div>
-                      <input type="checkbox" className="sr-only" checked={checked} onChange={() => toggleFlow(key)} />
                       <svg width="22" height="10" className="flex-shrink-0" style={{ opacity: checked ? 1 : 0.3 }}>
                         <line x1="0" y1="5" x2="16" y2="5" stroke={color} strokeWidth="2.5"
                           strokeDasharray={key === 'data' ? '4 2' : undefined} strokeLinecap="round" />
@@ -173,11 +198,12 @@ export default function TopBar({ workflowId, isMobile = false }) {
                           stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                       <span className="text-xs font-medium" style={{ color: checked ? '#374151' : '#9ca3af' }}>{label}</span>
-                    </label>
+                    </div>
                   )
                 })}
               </div>
-            </>
+            </>,
+            document.body,
           )}
         </div>
         <button onClick={handleExport} className={primary}>

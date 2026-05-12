@@ -22,9 +22,25 @@ export default function WorkflowCanvas({ readOnly = false }) {
   const reactFlowWrapper = useRef(null)
   const [rfInstance, setRfInstance] = useState(null)
   const [showMinimap, setShowMinimap] = useState(true)
+  const [isMultiTouchPanning, setIsMultiTouchPanning] = useState(false)
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode,
           clipboard, copyNode, pasteNode } = useWorkflowStore()
   const { selectedNodeId, setSelectedNodeId, setSelectedEdgeId, visibleFlows } = useUiStore()
+
+  const handleTouchStart = useCallback((e) => {
+    if (!readOnly) return
+    setIsMultiTouchPanning(e.touches.length >= 2)
+  }, [readOnly])
+
+  const handleTouchMove = useCallback((e) => {
+    if (!readOnly) return
+    setIsMultiTouchPanning(e.touches.length >= 2)
+  }, [readOnly])
+
+  const handleTouchEnd = useCallback((e) => {
+    if (!readOnly) return
+    setIsMultiTouchPanning(e.touches.length >= 2)
+  }, [readOnly])
 
   // Keyboard shortcuts: Ctrl+C copy selected node, Ctrl+V paste
   useEffect(() => {
@@ -166,7 +182,14 @@ export default function WorkflowCanvas({ readOnly = false }) {
   })
 
   return (
-    <div ref={reactFlowWrapper} className="w-full h-full">
+    <div
+      ref={reactFlowWrapper}
+      className="w-full h-full"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+    >
       <ReactFlow
         nodes={nodes} edges={displayEdges}
         onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
@@ -176,8 +199,14 @@ export default function WorkflowCanvas({ readOnly = false }) {
         onNodeClick={onNodeClick} onEdgeClick={onEdgeClick} onPaneClick={onPaneClick}
         nodeTypes={nodeTypes} edgeTypes={edgeTypes}
         fitView deleteKeyCode={readOnly ? null : 'Delete'}
-        selectionOnDrag={!readOnly} panOnDrag={readOnly ? true : [1, 2]}
-        nodesDraggable={!readOnly} nodesConnectable={!readOnly} elementsSelectable={!readOnly}
+        selectionOnDrag={!readOnly}
+        panOnDrag={readOnly ? isMultiTouchPanning : [2]}
+        panOnScroll={!readOnly}
+        panOnScrollMode="free"
+        zoomOnScroll={!readOnly}
+        zoomActivationKeyCode="Control"
+        zoomOnPinch
+        nodesDraggable={!readOnly} nodesConnectable={!readOnly} elementsSelectable
         elevateEdgesOnSelect
       >
         {!readOnly && <SelectionToolbar />}
